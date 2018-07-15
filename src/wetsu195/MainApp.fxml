@@ -12,7 +12,7 @@
             </AnchorPane>
         
             <AnchorPane fx:id="contentHolder" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0">
-                <fx:include source="View/Clients.fxml" />
+                <fx:include fx:id="includedFile" source="View/Clients.fxml" />
             </AnchorPane>
         </items>
       </SplitPane>

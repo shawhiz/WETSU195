@@ -20,7 +20,7 @@
 .button {
     -fx-background-color: #c9d700;
     -fx-font-size: 14;
-    -fx-min-width: 30;
+    -fx-width: 200;
     -fx-text-fill: #FFFFFF;
     -fx-font-family:"Nunito";
 }
@@ -47,9 +47,10 @@
 
 }
 
-.leftNav:active{
-    -fx-background-color: #406028;
+.active-nav{
+    -fx-background-color: #c9d700;
     -fx-text-fill:#FFFFFF;
+    -fx-font-size:24;
 }
 
 .header{
