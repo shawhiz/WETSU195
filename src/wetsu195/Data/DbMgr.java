@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import wetsu195.Data.model.User;
 
 /**
@@ -19,9 +21,9 @@ import wetsu195.Data.model.User;
  */
 public  abstract class DbMgr {
 
-    private String url = "jdbc:mysql://52.206.157.109/U04dK8";
+    private String url = "jdbc:mysql://52.206.157.109/U04dK8"; 
     private String user = "U04dK8";
-    private String password = "53688211336";
+    private String password = "53688211336"; 
     private Connection dbConnection;
 
     private static User activeUser = new User();
@@ -62,6 +64,7 @@ public  abstract class DbMgr {
             
             return dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(query);
         } catch (SQLException ex) {
+            showInvalidConnectionDialog(ex);
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         }
         closeDbConnection();
@@ -100,7 +103,11 @@ public  abstract class DbMgr {
     }
 
     private void showInvalidConnectionDialog(Exception ex) {
-        throw new UnsupportedOperationException("Not supported yet."); //Needs to popup an alert on any screen if the db connection fails.
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Database Connection Error");
+        alert.setHeaderText("Connection to database could not be made");
+        alert.setContentText("Database error reported: " + ex.getMessage());
+        alert.showAndWait();
     }
 
 }

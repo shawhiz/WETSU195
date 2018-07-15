@@ -5,10 +5,21 @@
  */
 package wetsu195;
 
+import static com.sun.javaws.Globals.getDefaultLocale;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,6 +35,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import wetsu195.Data.DbMgr;
 import wetsu195.Data.model.User;
@@ -34,8 +46,8 @@ import wetsu195.Data.model.User;
  */
 public class LoginController implements Initializable {
 
-    private static final DbMgr db = new DbMgr() {};
-    private Label label;
+    private static final DbMgr db = new DbMgr() {
+    };
     @FXML
     private AnchorPane root;
     @FXML
@@ -45,32 +57,41 @@ public class LoginController implements Initializable {
     @FXML
     private TextField username;
     @FXML
-    private ImageView logo;
+    private Pane choiceBoxHolder;
+
+    private static Locale locale;
     @FXML
-    private ChoiceBox<?> locale;
+    private ImageView logo;
 
-    private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
-    }
-
+    private ResourceBundle language;
+    
+   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        language = rb;
+        setLabelsForLanguage();
+        initializeLocaleChoiceBox();
     }
 
-    public User checkCredentials(String username, String password) throws SQLException, ClassNotFoundException {
-        return db.getUserByCredentials(username, password);
+    public User checkCredentials(String username, String password) {
+        try {
+            return db.getUserByCredentials(username, password);
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @FXML
-    public void Login() throws SQLException, ClassNotFoundException {
+    public void Login() {
         String name = username.getText();
         String pass = password.getText();
         User activeUser = checkCredentials(name, pass);
         if (activeUser != null) {
-            login.setText(activeUser.getUserName()+ " is logged in");
-            showClientScreen();
+            login.setText(activeUser.getUserName() + " is logged in");
+            showMainApp();
         } else {
             showInvalidLogin();
         }
@@ -79,27 +100,73 @@ public class LoginController implements Initializable {
 
     private void showInvalidLogin() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Invalid Login");
-        alert.setHeaderText("Invalid Login");
-        alert.setContentText("Your credentials were not found. Please try again");
-        alert.showAndWait();      
+        alert.setTitle(language.getString("invalid_login"));
+        alert.setHeaderText(language.getString("invalid_login"));
+        alert.setContentText(language.getString("invalid_credentials"));
+        alert.showAndWait();
     }
 
-    public void showClientScreen() {
+    public void showMainApp() {
         try {
-        Parent root = FXMLLoader.load(getClass().getResource("MainApp.fxml"));
-      
-           // SplitPane clientScreen = (SplitPane) loader.load();
-            Scene clientScene = new Scene(root);
-            //   ClientsController controller = loader.getController();
-            Stage clientsStage = new Stage();
-            clientsStage.setScene(clientScene);
-            clientsStage.show();
+            Parent root = FXMLLoader.load(getClass().getResource("MainApp.fxml"));
+
+            Scene mainScene = new Scene(root);
+            Stage mainStage = new Stage();
+            mainStage.setScene(mainScene);
+            mainStage.show();
             Stage thisStage = (Stage) login.getScene().getWindow();
             thisStage.close();
         } catch (IOException e) {
             //do something with this error?
         }
+    }
+
+    public static List<Locale> getSupportedLocales() {
+        return new ArrayList<>(Arrays.asList(Locale.ENGLISH, Locale.FRENCH));
+    }
+
+    public static Locale getDefaultLocale() {
+        Locale sysDefault = Locale.getDefault();
+        return getSupportedLocales().contains(sysDefault) ? sysDefault : Locale.ENGLISH;
+    }
+
+    public void setLocale(String selectedLanguage) {
+        if (selectedLanguage == "French") {
+            Locale.setDefault(Locale.FRENCH);
+        } else {
+            Locale.setDefault(Locale.ENGLISH);
+        }
+        language = ResourceBundle.getBundle("wetsu195.Resources.Labels");
+        setLabelsForLanguage();
+
+    }
+
+    private void setLabelsForLanguage() {
+        login.setText(language.getString("login"));
+        username.setPromptText(language.getString("username"));
+        password.setPromptText(language.getString("password"));
+    }
+
+    private void initializeLocaleChoiceBox() {
+        ChoiceBox localeChoiceBox = new ChoiceBox();
+        localeChoiceBox.getItems().addAll("English", "French");
+        localeChoiceBox.getStyleClass().add("button-date");
+
+        localeChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                setLocale(newValue);
+            }
+        });
+
+        String displayLanguage = language.getLocale().getDisplayLanguage();
+
+        if (localeChoiceBox.getItems().contains(displayLanguage)) {
+            localeChoiceBox.setValue(displayLanguage);
+        } else {
+            localeChoiceBox.setValue("English");
+        }
+        choiceBoxHolder.getChildren().add(localeChoiceBox);
     }
 
 }
