@@ -3,14 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/View/Reports.fxml</file>
             <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/Resources/wetsu.css</file>
-            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/View/ClientsController.java</file>
+            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/View/Appointments.fxml</file>
             <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/LoginController.java</file>
-            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/Data/DbMgr.java</file>
-            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/Main.java</file>
-            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/Login.fxml</file>
-            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/MainAppController.java</file>
+            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/View/AppointmentsController.java</file>
+            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/View/Calendar.fxml</file>
+            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/View/CalendarController.java</file>
             <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/View/LeftNavController.java</file>
+            <file>file:/C:/Users/shawh/Documents/NetBeansProjects/WETSU195/src/wetsu195/MainAppController.java</file>
         </group>
     </open-files>
 </project-private>

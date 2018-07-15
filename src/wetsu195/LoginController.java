@@ -108,7 +108,6 @@ public class LoginController implements Initializable {
     public void showMainApp() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("MainApp.fxml"));
-
             Scene mainScene = new Scene(root);
             Stage mainStage = new Stage();
             mainStage.setScene(mainScene);
