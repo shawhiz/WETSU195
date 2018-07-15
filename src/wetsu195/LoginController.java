@@ -64,8 +64,7 @@ public class LoginController implements Initializable {
     private ImageView logo;
 
     private ResourceBundle language;
-    
-   
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         language = rb;
