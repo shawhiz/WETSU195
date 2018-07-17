@@ -84,12 +84,11 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    public void Login() {
+    public void Login() throws IOException {
         String name = username.getText();
         String pass = password.getText();
         User activeUser = checkCredentials(name, pass);
         if (activeUser != null) {
-            login.setText(activeUser.getUserName() + " is logged in");
             showMainApp();
         } else {
             showInvalidLogin();
@@ -105,18 +104,15 @@ public class LoginController implements Initializable {
         alert.showAndWait();
     }
 
-    public void showMainApp() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("MainApp.fxml"));
-            Scene mainScene = new Scene(root);
+    public void showMainApp() throws IOException {
+            Parent parent = FXMLLoader.load(getClass().getResource("MainApp.fxml"));
+            Scene mainScene = new Scene(parent);
             Stage mainStage = new Stage();
             mainStage.setScene(mainScene);
             mainStage.show();
             Stage thisStage = (Stage) login.getScene().getWindow();
             thisStage.close();
-        } catch (IOException e) {
-            //do something with this error?
-        }
+        
     }
 
     public static List<Locale> getSupportedLocales() {

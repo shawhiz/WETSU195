@@ -19,7 +19,7 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author shawh
  */
-public class MainAppController implements Initializable {
+public class MainAppController   implements Initializable{
 
     @FXML
     private AnchorPane root;
@@ -29,36 +29,34 @@ public class MainAppController implements Initializable {
     private AnchorPane navHolder;
     @FXML
     public  AnchorPane contentHolder;
-    
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-    }    
-    
+        
     public void showClients() throws IOException{
-        AnchorPane clientPane = FXMLLoader.load(getClass().getResource("View/Clients.fxml"));             
+    
+        AnchorPane clientPane = FXMLLoader.load(getClass().getResource("Clients.fxml"));             
         contentHolder.getChildren().setAll(clientPane);
     }
 
     public void showAppointments() throws IOException {
-       AnchorPane appointmentsPane = FXMLLoader.load(getClass().getResource("View/Appointments.fxml"));
+       AnchorPane appointmentsPane = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
        contentHolder.getChildren().setAll(appointmentsPane);  
     }
 
     public void showCalendar() throws IOException {
-       AnchorPane calendarPane = FXMLLoader.load(getClass().getResource("View/Calendar.fxml"));
+       AnchorPane calendarPane = FXMLLoader.load(getClass().getResource("Calendar.fxml"));
        contentHolder.getChildren().setAll(calendarPane);  
     }
 
     public void showReports() throws IOException {
-       AnchorPane reportsPane = FXMLLoader.load(getClass().getResource("View/Reports.fxml"));
+       AnchorPane reportsPane = FXMLLoader.load(getClass().getResource("Reports.fxml"));
        contentHolder.getChildren().setAll(reportsPane);  
     }
 
     public void signOut() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
     }
     
 }

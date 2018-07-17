@@ -8,11 +8,11 @@
       <SplitPane fx:id="mainSplit" dividerPositions="0.16" styleClass="split-pane-horizontal" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>               
             <AnchorPane fx:id="navHolder" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="200.0">
-                <fx:include source="View/LeftNav.fxml" />
+                <fx:include source="LeftNav.fxml" />
             </AnchorPane>
         
             <AnchorPane fx:id="contentHolder" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0">
-                <fx:include fx:id="includedFile" source="View/Clients.fxml" />
+                <fx:include fx:id="includedFile" source="Clients.fxml" />
             </AnchorPane>
         </items>
       </SplitPane>
