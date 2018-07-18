@@ -24,7 +24,7 @@ import wetsu195.Data.model.User;
  *
  * @author shawh
  */
-public abstract class DbMgr {
+public  abstract class DbMgr {
 
     private String url = "jdbc:mysql://52.206.157.109/U04dK8";
     private String user = "U04dK8";
@@ -33,7 +33,7 @@ public abstract class DbMgr {
 
     private static User activeUser = new User();
 
-    private void connectToDB() throws SQLException, ClassNotFoundException {
+    private  void connectToDB() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         dbConnection = DriverManager.getConnection(url, user, password);
         dbConnection.isValid(10);
@@ -49,17 +49,17 @@ public abstract class DbMgr {
          */
     }
 
-    public void closeDbConnection() throws SQLException {
+    public  void closeDbConnection() throws SQLException {
         if (dbConnection != null) {
             dbConnection.close();
         }
     }
 
-    public static User getActiveUser() {
+    public  User getActiveUser() {
         return activeUser;
     }
 
-    public static void setActiveUser(User aActiveUser) {
+    public  void setActiveUser(User aActiveUser) {
         activeUser = aActiveUser;
     }
 
@@ -76,7 +76,7 @@ public abstract class DbMgr {
         return null;
     }
 
-    public int executeUpdate(String sql) throws SQLException, ClassNotFoundException {
+    public  int executeUpdate(String sql) throws SQLException, ClassNotFoundException {
         connectToDB();
         try {
             return dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeUpdate(sql);
@@ -118,7 +118,7 @@ public abstract class DbMgr {
         return null;
     }
 
-    public Integer saveNewCustomer(Customer customer, Address address, City city, Country country) throws SQLException, ClassNotFoundException {;
+    public  Integer saveNewCustomer(Customer customer, Address address, City city, Country country) throws SQLException, ClassNotFoundException {;
         try {
             Date now = new Date(); //getting the date to use for all inserts 1 time
             String createdBy = activeUser.getUserName(); //getting the activeuser username 1 time
@@ -157,7 +157,7 @@ public abstract class DbMgr {
         return null;
     }
 
-    private Integer createCountry(Country country) throws SQLException, ClassNotFoundException {
+    private  Integer createCountry(Country country) throws SQLException, ClassNotFoundException {
         int countryId = Country.getNewId();
         String updateString = "INSERT INTO city VALUES ("
                 + countryId + ", "
@@ -170,7 +170,7 @@ public abstract class DbMgr {
         return (results > 0) ? countryId : null;
     }
 
-    private Integer createCity(City city) throws SQLException, ClassNotFoundException {
+    private  Integer createCity(City city) throws SQLException, ClassNotFoundException {
         int cityId = City.getNewId();
         String updateString = "INSERT INTO city VALUES ("
                 + cityId + ", "
@@ -184,7 +184,7 @@ public abstract class DbMgr {
         return (results > 0) ? cityId : null;
     }
 
-    private Integer createAddress(Address address) throws SQLException, ClassNotFoundException {
+    private  Integer createAddress(Address address) throws SQLException, ClassNotFoundException {
         int addressId = Address.getNewId();
         String updateString = "INSERT INTO address VALUES ("
                 + addressId + ", "
@@ -201,7 +201,7 @@ public abstract class DbMgr {
         return (results > 0) ? addressId : null;
     }
 
-    private Integer createCustomer(Customer customer) throws SQLException, ClassNotFoundException {
+    private  Integer createCustomer(Customer customer) throws SQLException, ClassNotFoundException {
         int customerId = Customer.getNewId();
         String updateString = "INSERT INTO customer VALUES( "
                 + customerId + ", "

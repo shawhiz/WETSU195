@@ -19,8 +19,8 @@
       <Separator fx:id="divider" prefHeight="0.0" prefWidth="571.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="70.0" />
       <ButtonBar fx:id="buttonbar" layoutX="416.0" layoutY="495.0" AnchorPane.bottomAnchor="24.0" AnchorPane.rightAnchor="34.0">
          <buttons>
-            <Button fx:id="save" defaultButton="true" mnemonicParsing="false" text="Save" />
-            <Button fx:id="cancel" cancelButton="true" mnemonicParsing="false" styleClass="button-cancel" text="Cancel" />
+            <Button fx:id="save" defaultButton="true" mnemonicParsing="false" onAction="#buildCustomer" text="Save" />
+            <Button fx:id="cancel" cancelButton="true" mnemonicParsing="false" onAction="#cancel" styleClass="button-cancel" text="Cancel" />
          </buttons>
       </ButtonBar>
       <VBox fx:id="clientinfo" layoutX="25.0" layoutY="88.0" prefHeight="316.0" prefWidth="571.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0">
