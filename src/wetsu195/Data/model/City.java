@@ -8,6 +8,8 @@ package wetsu195.Data.model;
 import java.util.Date;
 
 public class City  {
+    
+        private static Integer idTicker = 0;
 
        private Integer cityId;
     
@@ -28,6 +30,11 @@ public class City  {
 
     public City(Integer cityId) {
         this.cityId = cityId;
+    }
+    
+        public static Integer getNewId(){
+        idTicker = idTicker + 1;
+        return idTicker;
     }
 
     public City(Integer cityId, String city, int countryId, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {

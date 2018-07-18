@@ -7,6 +7,8 @@ package wetsu195.Data.model;
 
 import java.util.Date;
 public class User  {
+    
+        private static Integer idTicker = 0;
 
      private Integer userId;
     
@@ -25,6 +27,10 @@ public class User  {
     private String lastUpdatedBy;
 
     public User() {
+    }
+        public static Integer getNewId(){
+        idTicker = idTicker + 1;
+        return idTicker;
     }
 
     public User(Integer userId) {

@@ -10,6 +10,7 @@ import java.util.Date;
 
 public class Address  {
 
+    private static Integer idTicker = 0;
 
     private Integer addressId;
 
@@ -32,6 +33,11 @@ public class Address  {
     private String lastUpdateBy;
 
     public Address() {
+    }
+    
+    public static Integer getNewId(){
+        idTicker = idTicker + 1;
+        return idTicker;
     }
 
     public Address(Integer addressId) {

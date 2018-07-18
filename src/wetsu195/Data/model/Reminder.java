@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class Reminder  {
 
+        private static Integer idTicker = 0;
   
     private Integer reminderId;
     
@@ -27,6 +28,10 @@ public class Reminder  {
     private String remindercol;
 
     public Reminder() {
+    }
+        public static Integer getNewId(){
+        idTicker = idTicker + 1;
+        return idTicker;
     }
 
     public Reminder(Integer reminderId) {

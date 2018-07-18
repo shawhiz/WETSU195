@@ -9,6 +9,8 @@ import java.util.Date;
 
 
 public class Appointment  {
+    
+        private static Integer idTicker = 0;
 
      private Integer appointmentId;
    
@@ -37,6 +39,11 @@ public class Appointment  {
     private String lastUpdateBy;
 
     public Appointment() {
+    }
+    
+        public static Integer getNewId(){
+        idTicker = idTicker + 1;
+        return idTicker;
     }
 
     public Appointment(Integer appointmentId) {

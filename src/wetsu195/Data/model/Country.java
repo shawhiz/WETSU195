@@ -8,6 +8,8 @@ package wetsu195.Data.model;
 import java.util.Date;
 
 public class Country {
+    
+        private static Integer idTicker = 0;
 
        private Integer countryId;
    
@@ -26,6 +28,11 @@ public class Country {
 
     public Country(Integer countryId) {
         this.countryId = countryId;
+    }
+    
+        public static Integer getNewId(){
+        idTicker = idTicker + 1;
+        return idTicker;
     }
 
     public Country(Integer countryId, String country, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {

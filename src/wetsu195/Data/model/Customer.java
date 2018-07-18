@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class Customer {
 
+    private static Integer idTicker = 0;
     
     private Integer customerId;
     
@@ -27,6 +28,11 @@ public class Customer {
     private String lastUpdateBy;
 
     public Customer() {
+    }
+    
+    public static Integer getNewId(){
+        idTicker = idTicker + 1;
+        return idTicker;
     }
 
     public Customer(Integer customerId) {
