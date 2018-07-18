@@ -1,4 +1,4 @@
-/* 
+/*
     Created on : Jul 8, 2018, 6:09:08 PM
     Author     : shawh
 */
@@ -14,7 +14,7 @@
     -fx-border-style: none;
     -fx-font-family:"Nunito";
     -fx-font-size: 14;
-   
+
 }
 
 .button {
@@ -36,6 +36,28 @@
     -fx-min-width:100;
 }
 
+.button-toggle-right {
+    -fx-height: 30;
+    -fx-background-color: #c9d700;
+    -fx-text-fill: #FFF;
+    -fx-border-top-right-radius: 20px;
+    -fx-border-bottom-right-radius: 20px;
+
+    -fx-border-top-left-radius: 0px;
+    -fx-border-bottom-left-radius: 0px
+}
+
+.button-toggle-left {
+    -fx-height: 30;
+    -fx-background-color: #c9d700;
+    -fx-text-fill: #FFF;
+    -fx-border-top-left-radius: 20px;
+    -fx-border-bottom-left-radius: 20px;
+
+    -fx-border-top-right-radius: 0px;
+    -fx-border-bottom-right-radius: 0px;
+}
+
 .leftNav {
     -fx-background-color: #ffffff;
     -fx-text-fill:#406028;
@@ -54,7 +76,7 @@
 }
 
 .header{
-       
+
     -fx-text-fill:#406028;
     -fx-font-size: 34;
     -fx-min-height: 40;
@@ -89,7 +111,7 @@
 }
 
 .split-pane-horizontal > .split-pane-divider {
-    -fx-background-color: #eee;  
+    -fx-background-color: #eee;
     -fx-padding: 1;
 }
 
