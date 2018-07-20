@@ -124,7 +124,7 @@ public abstract class DbMgr {
 
             closeDbConnection();
             return activeUser;
-        }    
+        }
         return null;
     }
 
@@ -181,51 +181,69 @@ public abstract class DbMgr {
     }
 
     private Integer createCity(City city) throws SQLException, ClassNotFoundException {
-        int cityId = City.getNewId();
-        String updateString = "INSERT INTO city VALUES ("
-                + cityId + ", "
-                + city.getCity() + ", "
-                + city.getCountryId() + ", "
-                + city.getCreateDate() + ", "
-                + city.getCreatedBy() + ", "
-                + city.getLastUpdate() + ", "
-                + city.getLastUpdateBy() + ")";
-        int results = executeUpdate(updateString);
-        return (results > 0) ? cityId : null;
+        Integer newId = null;
+        Timestamp date = new Timestamp(new Date().getTime());
+        connectToDB();
+
+        String sql = "INSERT INTO city (city, countryId, createDate, createdBy, lastUpdateBy) VALUES ( ?, ?, ?, ?, ?)";
+
+        PreparedStatement statement = dbConnection.prepareStatement(sql);
+        statement.setString(1, city.getCity()); //city
+        statement.setInt(2, city.getCountryId()); //countryId
+        statement.setString(3, date.toString()); //createDate
+        statement.setString(4, activeUser.getUserName()); //createdBy
+        statement.setString(5, activeUser.getUserName()); //lastUpdateBy     
+
+        if ((statement.executeUpdate()) > 0) {
+            newId = getInsertedId();
+        }
+        closeDbConnection();
+        return newId;
     }
 
     private Integer createAddress(Address address) throws SQLException, ClassNotFoundException {
-        int addressId = Address.getNewId();
-        String updateString = "INSERT INTO address VALUES ("
-                + addressId + ", "
-                + address.getAddress() + ", "
-                + address.getAddress2() + ", "
-                + address.getCityId() + ", "
-                + address.getPostalCode() + ", "
-                + address.getPhone() + ", "
-                + address.getCreateDate() + ", "
-                + address.getCreatedBy() + ", "
-                + address.getLastUpdate() + ", "
-                + address.getLastUpdateBy() + ")";
-        int results = executeUpdate(updateString);
-        return (results > 0) ? addressId : null;
+        Integer newId = null;
+        Timestamp date = new Timestamp(new Date().getTime());
+        connectToDB();
+
+        String sql = "INSERT INTO address (address, cityId, postalCode, phone, createDate, createdBy, lastUpdateBy) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement statement = dbConnection.prepareStatement(sql);
+        statement.setString(1, address.getAddress()); //address
+        statement.setString(2, address.getAddress2()); //address2
+        statement.setInt(3, address.getCityId()); // city
+        statement.setString(4, address.getPostalCode()); //postalcode
+        statement.setString(5, date.toString()); //createDate
+        statement.setString(6, activeUser.getUserName()); //createdBy
+        statement.setString(7, activeUser.getUserName()); //lastUpdateBy     
+
+        if ((statement.executeUpdate()) > 0) {
+            newId = getInsertedId();
+        }
+        closeDbConnection();
+        return newId;
     }
 
     private Integer createCustomer(Customer customer) throws SQLException, ClassNotFoundException {
-        int customerId = Customer.getNewId();
-        String updateString = "INSERT INTO customer VALUES( "
-                + customerId + ", "
-                + customer.getCustomerName() + ", "
-                + customer.getAddressId() + ", "
-                + ((customer.getActive() == true) ? 1 : 0) + ", "
-                + new Date() + ", "
-                + activeUser.getUserName() + ", "
-                + new Date() + ", "
-                + activeUser.getUserName() + ")";
-        int results = executeUpdate(updateString);
+        Integer newId = null;
+        Timestamp date = new Timestamp(new Date().getTime());
+        connectToDB();
 
-        return (results > 0) ? customerId : null;
+        String sql = "INSERT INTO customer ( customerName, addressId, active, createDate, createdBy, lastUpdateBy) VALUES ( ?, ?, ?, ?, ?, ?)";
 
+        PreparedStatement statement = dbConnection.prepareStatement(sql);
+        statement.setString(1, customer.getCustomerName()); //name
+        statement.setInt(2, customer.getAddressId()); //addressId
+        statement.setInt(3, (customer.getActive())? 1: 0); // active
+        statement.setString(5, date.toString()); //createDate
+        statement.setString(6, activeUser.getUserName()); //createdBy
+        statement.setString(7, activeUser.getUserName()); //lastUpdateBy     
+
+        if ((statement.executeUpdate()) > 0) {
+            newId = getInsertedId();
+        }
+        closeDbConnection();
+        return newId;
     }
 
     private void showInvalidConnectionDialog(Exception ex) {
