@@ -56,7 +56,7 @@ public class CalendarController implements Initializable {
 
     private void populateCalendar(Date start, Date stop) {
 
-        int datesShown = Day.daysBetween(start, stop).getDays();
+  //      int datesShown = daysBetween(start, stop).getDays();
 
     }
 

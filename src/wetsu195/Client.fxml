@@ -13,11 +13,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="558.0" prefWidth="623.0" stylesheets="@Resources/wetsu.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wetsu195.ClientController">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="625.0" stylesheets="@Resources/wetsu.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wetsu195.ClientController">
    <children>
       <Label fx:id="title" styleClass="header" stylesheets="@../../../WETSUAppointments/src/wetsuappointments/resources/westsu.css" text="Client Detail" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="24.0" />
       <Separator fx:id="divider" prefHeight="0.0" prefWidth="571.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="70.0" />
-      <ButtonBar fx:id="buttonbar" layoutX="416.0" layoutY="495.0" AnchorPane.bottomAnchor="24.0" AnchorPane.rightAnchor="34.0">
+      <ButtonBar fx:id="buttonbar" layoutX="416.0" layoutY="495.0" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="34.0">
          <buttons>
             <Button fx:id="save" defaultButton="true" mnemonicParsing="false" onAction="#buildCustomer" text="Save" />
             <Button fx:id="cancel" cancelButton="true" mnemonicParsing="false" onAction="#cancel" styleClass="button-cancel" text="Cancel" />

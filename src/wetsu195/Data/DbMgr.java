@@ -7,8 +7,11 @@ package wetsu195.Data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +27,7 @@ import wetsu195.Data.model.User;
  *
  * @author shawh
  */
-public  abstract class DbMgr {
+public abstract class DbMgr {
 
     private String url = "jdbc:mysql://52.206.157.109/U04dK8";
     private String user = "U04dK8";
@@ -33,7 +36,7 @@ public  abstract class DbMgr {
 
     private static User activeUser = new User();
 
-    private  void connectToDB() throws SQLException, ClassNotFoundException {
+    private void connectToDB() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         dbConnection = DriverManager.getConnection(url, user, password);
         dbConnection.isValid(10);
@@ -49,17 +52,17 @@ public  abstract class DbMgr {
          */
     }
 
-    public  void closeDbConnection() throws SQLException {
+    public void closeDbConnection() throws SQLException {
         if (dbConnection != null) {
             dbConnection.close();
         }
     }
 
-    public  User getActiveUser() {
+    public User getActiveUser() {
         return activeUser;
     }
 
-    public  void setActiveUser(User aActiveUser) {
+    public void setActiveUser(User aActiveUser) {
         activeUser = aActiveUser;
     }
 
@@ -76,7 +79,7 @@ public  abstract class DbMgr {
         return null;
     }
 
-    public  int executeUpdate(String sql) throws SQLException, ClassNotFoundException {
+    public int executeUpdate(String sql) throws SQLException, ClassNotFoundException {
         connectToDB();
         try {
             return dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeUpdate(sql);
@@ -100,77 +103,84 @@ public  abstract class DbMgr {
     }
 
     public User getUserByCredentials(String username, String password) throws SQLException, ClassNotFoundException {
-        String queryString = "Select * from user where username = \'" + username + "\'  AND password = \'" + password + "\'";
-        ResultSet results = executeQuery(queryString);
+
+        connectToDB();
+        String sql = "SELECT * from user where username = ? AND password = ?";
+
+        PreparedStatement statement = dbConnection.prepareStatement(sql);
+        statement.setString(1, username); //username
+        statement.setString(2, password); //password   
+
+        ResultSet results = statement.executeQuery();
         if (getResultSize(results) == 1) {
-            try {
-                User newUser = new User();
-                newUser.setUserId(results.getInt("userId"));
-                newUser.setUserName(results.getString("userName"));
-                newUser.setPassword(results.getString("password"));
-                newUser.setActive(results.getShort("active"));
-                activeUser = newUser;
-                return newUser;
-            } catch (SQLException ex) {
-                return null;
-            }
-        }
+            activeUser.setUserId(results.getInt(1)); //userId
+            activeUser.setUserName(results.getString(2)); //username
+            activeUser.setPassword(results.getString(3)); //password
+            activeUser.setActive((short) results.getInt(4)); //active 1 inactive 0
+            activeUser.setCreateBy(results.getString(5)); //createBy
+            activeUser.setCreateDate(results.getDate(6)); //createDate
+            activeUser.setLastUpdate(results.getDate(7)); //lastUpdate
+            activeUser.setLastUpdatedBy(results.getString(8)); //lastUpdateBy  
+
+            closeDbConnection();
+            return activeUser;
+        }    
         return null;
     }
 
-    public  Integer saveNewCustomer(Customer customer, Address address, City city, Country country) throws SQLException, ClassNotFoundException {;
+    public Integer saveNewCustomer(Customer customer, Address address, City city, Country country) throws SQLException, ClassNotFoundException {;
         try {
-            Date now = new Date(); //getting the date to use for all inserts 1 time
-            String createdBy = activeUser.getUserName(); //getting the activeuser username 1 time
 
-            country.setCreateDate(now);
-            country.setLastUpdate(now);
-            country.setCreatedBy(createdBy);
-            country.setLastUpdateBy(createdBy);
             Integer countryId = createCountry(country);
-            
-            city.setCreateDate(now);
-            city.setLastUpdate(now);
-            city.setCreatedBy(createdBy);
-            city.setLastUpdateBy(createdBy);
+
             city.setCountryId(countryId);
             Integer cityId = createCity(city);
-            
-            address.setCreateDate(now);
-            address.setLastUpdate(now);
-            address.setCreatedBy(createdBy);
-            address.setLastUpdateBy(createdBy);
+
             address.setCityId(cityId);
             Integer addressId = createAddress(address);
-            
-            customer.setCreateDate(now);
-            customer.setLastUpdate(now);
-            customer.setCreatedBy(createdBy);
-            customer.setLastUpdateBy(createdBy);
+
             customer.setAddressId(addressId);
             Integer customerId = createCustomer(customer);
-            
+
             return customerId;
-        } catch (Exception ex){
+
+        } catch (Exception ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-    private  Integer createCountry(Country country) throws SQLException, ClassNotFoundException {
-        int countryId = Country.getNewId();
-        String updateString = "INSERT INTO city VALUES ("
-                + countryId + ", "
-                + country.getCountry() + ", "
-                + country.getCreateDate() + ", "
-                + country.getCreatedBy() + ", "
-                + country.getLastUpdate() + ", "
-                + country.getLastUpdateBy() + ") ";
-        int results = executeUpdate(updateString);
-        return (results > 0) ? countryId : null;
+    private Integer getInsertedId() throws SQLException, ClassNotFoundException {
+        String sql = "SELECT LAST_INSERT_ID() as 'id'; ";
+        Statement statement = dbConnection.createStatement();
+        ResultSet results = statement.executeQuery(sql);
+        if (results.next()) {
+            return results.getInt(1);
+        }
+        return null;
     }
 
-    private  Integer createCity(City city) throws SQLException, ClassNotFoundException {
+    private Integer createCountry(Country country) throws SQLException, ClassNotFoundException {
+        Integer newId = null;
+        Timestamp date = new Timestamp(new Date().getTime());
+        connectToDB();
+
+        String sql = "INSERT INTO country (country, createdBy, createDate, lastUpdateBy) VALUES ( ?, ?, ?, ?)";
+
+        PreparedStatement statement = dbConnection.prepareStatement(sql);
+        statement.setString(1, country.getCountry()); //country
+        statement.setString(2, activeUser.getUserName()); //createdBy
+        statement.setString(3, date.toString()); //createDate
+        statement.setString(4, activeUser.getUserName()); //lastUpdateBy     
+
+        if ((statement.executeUpdate()) > 0) {
+            newId = getInsertedId();
+        }
+        closeDbConnection();
+        return newId;
+    }
+
+    private Integer createCity(City city) throws SQLException, ClassNotFoundException {
         int cityId = City.getNewId();
         String updateString = "INSERT INTO city VALUES ("
                 + cityId + ", "
@@ -184,7 +194,7 @@ public  abstract class DbMgr {
         return (results > 0) ? cityId : null;
     }
 
-    private  Integer createAddress(Address address) throws SQLException, ClassNotFoundException {
+    private Integer createAddress(Address address) throws SQLException, ClassNotFoundException {
         int addressId = Address.getNewId();
         String updateString = "INSERT INTO address VALUES ("
                 + addressId + ", "
@@ -201,7 +211,7 @@ public  abstract class DbMgr {
         return (results > 0) ? addressId : null;
     }
 
-    private  Integer createCustomer(Customer customer) throws SQLException, ClassNotFoundException {
+    private Integer createCustomer(Customer customer) throws SQLException, ClassNotFoundException {
         int customerId = Customer.getNewId();
         String updateString = "INSERT INTO customer VALUES( "
                 + customerId + ", "
@@ -214,7 +224,7 @@ public  abstract class DbMgr {
                 + activeUser.getUserName() + ")";
         int results = executeUpdate(updateString);
 
-        return (results > 0) ? customerId: null;
+        return (results > 0) ? customerId : null;
 
     }
 
