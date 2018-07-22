@@ -12,13 +12,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import wetsu195.Data.model.Address;
 import wetsu195.Data.model.City;
+import wetsu195.Data.model.ClientView;
 import wetsu195.Data.model.Country;
 import wetsu195.Data.model.Customer;
 import wetsu195.Data.model.User;
@@ -29,27 +36,16 @@ import wetsu195.Data.model.User;
  */
 public abstract class DbMgr {
 
-    private String url = "jdbc:mysql://52.206.157.109/U04dK8";
-    private String user = "U04dK8";
-    private String password = "53688211336";
+    private static String url = "jdbc:mysql://52.206.157.109/U04dK8";
+    private static String user = "U04dK8";
+    private static String password = "53688211336";
     private Connection dbConnection;
 
     private static User activeUser = new User();
 
-    private void connectToDB() throws SQLException, ClassNotFoundException {
+    private void connectToDb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         dbConnection = DriverManager.getConnection(url, user, password);
-        dbConnection.isValid(10);
-        /*
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            if (connection.isValid(5)) {
-                dbConnection = connection;
-            }
-        } catch (Exception ex) {
-            showInvalidConnectionDialog(ex);
-            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         */
     }
 
     public void closeDbConnection() throws SQLException {
@@ -66,30 +62,6 @@ public abstract class DbMgr {
         activeUser = aActiveUser;
     }
 
-    public ResultSet executeQuery(String sql) throws SQLException, ClassNotFoundException {
-        connectToDB();
-        try {
-
-            return dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
-        } catch (SQLException ex) {
-            showInvalidConnectionDialog(ex);
-            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        closeDbConnection();
-        return null;
-    }
-
-    public int executeUpdate(String sql) throws SQLException, ClassNotFoundException {
-        connectToDB();
-        try {
-            return dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeUpdate(sql);
-        } catch (SQLException ex) {
-            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        closeDbConnection();
-        return 0;
-    }
-
     private int getResultSize(ResultSet rs) {
         int size = 0;
         try {
@@ -104,7 +76,7 @@ public abstract class DbMgr {
 
     public User getUserByCredentials(String username, String password) throws SQLException, ClassNotFoundException {
 
-        connectToDB();
+        connectToDb();
         String sql = "SELECT * from user where username = ? AND password = ?";
 
         PreparedStatement statement = dbConnection.prepareStatement(sql);
@@ -163,7 +135,7 @@ public abstract class DbMgr {
     private Integer createCountry(Country country) throws SQLException, ClassNotFoundException {
         Integer newId = null;
         Timestamp date = new Timestamp(new Date().getTime());
-        connectToDB();
+        connectToDb();
 
         String sql = "INSERT INTO country (country, createdBy, createDate, lastUpdateBy) VALUES ( ?, ?, ?, ?)";
 
@@ -183,7 +155,7 @@ public abstract class DbMgr {
     private Integer createCity(City city) throws SQLException, ClassNotFoundException {
         Integer newId = null;
         Timestamp date = new Timestamp(new Date().getTime());
-        connectToDB();
+        connectToDb();
 
         String sql = "INSERT INTO city (city, countryId, createDate, createdBy, lastUpdateBy) VALUES ( ?, ?, ?, ?, ?)";
 
@@ -204,18 +176,19 @@ public abstract class DbMgr {
     private Integer createAddress(Address address) throws SQLException, ClassNotFoundException {
         Integer newId = null;
         Timestamp date = new Timestamp(new Date().getTime());
-        connectToDB();
+        connectToDb();
 
-        String sql = "INSERT INTO address (address, cityId, postalCode, phone, createDate, createdBy, lastUpdateBy) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO address (address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdateBy) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement statement = dbConnection.prepareStatement(sql);
         statement.setString(1, address.getAddress()); //address
         statement.setString(2, address.getAddress2()); //address2
-        statement.setInt(3, address.getCityId()); // city
+        statement.setInt(3, address.getCityId()); // cityId
         statement.setString(4, address.getPostalCode()); //postalcode
-        statement.setString(5, date.toString()); //createDate
-        statement.setString(6, activeUser.getUserName()); //createdBy
-        statement.setString(7, activeUser.getUserName()); //lastUpdateBy     
+        statement.setString(5, address.getPhone()); //phone
+        statement.setString(6, date.toString()); //createDate
+        statement.setString(7, activeUser.getUserName()); //createdBy
+        statement.setString(8, activeUser.getUserName()); //lastUpdateBy     
 
         if ((statement.executeUpdate()) > 0) {
             newId = getInsertedId();
@@ -227,7 +200,7 @@ public abstract class DbMgr {
     private Integer createCustomer(Customer customer) throws SQLException, ClassNotFoundException {
         Integer newId = null;
         Timestamp date = new Timestamp(new Date().getTime());
-        connectToDB();
+        connectToDb();
 
         String sql = "INSERT INTO customer ( customerName, addressId, active, createDate, createdBy, lastUpdateBy) VALUES ( ?, ?, ?, ?, ?, ?)";
 
@@ -235,9 +208,9 @@ public abstract class DbMgr {
         statement.setString(1, customer.getCustomerName()); //name
         statement.setInt(2, customer.getAddressId()); //addressId
         statement.setInt(3, (customer.getActive())? 1: 0); // active
-        statement.setString(5, date.toString()); //createDate
-        statement.setString(6, activeUser.getUserName()); //createdBy
-        statement.setString(7, activeUser.getUserName()); //lastUpdateBy     
+        statement.setString(4, date.toString()); //createDate
+        statement.setString(5, activeUser.getUserName()); //createdBy
+        statement.setString(6, activeUser.getUserName()); //lastUpdateBy     
 
         if ((statement.executeUpdate()) > 0) {
             newId = getInsertedId();
@@ -253,4 +226,127 @@ public abstract class DbMgr {
         alert.setContentText("Database error reported: " + ex.getMessage());
         alert.showAndWait();
     }
+    
+    private List <Customer> getCustomers() throws SQLException{
+        
+        List<Customer> customers = new ArrayList<Customer>();
+        String sql = "SELECT * FROM customer";
+        Statement statement = dbConnection.createStatement();
+        ResultSet results = statement.executeQuery(sql);
+        
+        while(results.next()) {
+            Customer customer = new Customer();
+            customer.setCustomerId(results.getInt(1)); //id
+            customer.setCustomerName(results.getString(2));
+            customer.setAddressId(results.getInt(3));
+            customer.setActive((results.getInt(4) == 1)? true : false);
+            customer.setCreateDate(results.getDate(5));
+            customer.setCreatedBy(results.getString(6));
+            customer.setLastUpdate(results.getDate(7));
+            customer.setLastUpdateBy(results.getString(8));
+            
+            customers.add(customer);          
+        }
+        
+        return customers;
+    }
+    
+    
+    
+    public ObservableList<ClientView> getClientView () {
+        try {
+            ObservableList<ClientView> clientView = FXCollections.observableArrayList();
+            connectToDb();
+            String sql = "SELECT * from clientView";
+            Statement statement = dbConnection.createStatement();
+            ResultSet results =  statement.executeQuery(sql);
+            
+            while (results.next()){
+                ClientView client = new ClientView();
+                client.setCustomerId(results.getInt(1));
+                client.setCustomerName(results.getString(2));
+                client.setActive((results.getInt(3) == 1));
+                client.setPhone(results.getString(4));
+                client.setAddress(results.getString(5));
+                client.setAppointmentCount(results.getInt(6));
+                
+                clientView.add(client);
+            }
+             closeDbConnection();
+            return clientView;
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+     }
+
+    public Customer getCustomer(Integer customerId) throws SQLException {
+        
+        try {
+            Customer customer = new Customer();
+            
+            connectToDb();
+            String sql = "SELECT * FROM customer where customerId = ? ";
+            
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, customerId); //username
+            ResultSet results = statement.executeQuery();
+            
+            if(results.next()) {
+                customer.setCustomerId(results.getInt(1)); //id
+                customer.setCustomerName(results.getString(2));
+                customer.setAddressId(results.getInt(3));
+                customer.setActive((results.getInt(4) == 1));
+                customer.setCreateDate(results.getDate(5));
+                customer.setCreatedBy(results.getString(6));
+                customer.setLastUpdate(results.getDate(7));
+                customer.setLastUpdateBy(results.getString(8));
+            }
+            
+            closeDbConnection();
+            return customer;
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+       
+    }
+
+    public Address getAddress(int addressId) {
+        
+        try {
+            Address address = new Address();
+            
+            connectToDb();
+            String sql = "SELECT * FROM address where addressId = ? ";
+            
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, addressId); 
+            ResultSet results = statement.executeQuery();
+            
+            if(results.next()) {
+                address.setAddressId(results.getInt(1)); //id
+                address.setAddress(results.getString(2));
+                address.setAddress2(results.getString(3));
+                address.setCityId((results.getInt(4) == 1));
+                address.setPostalCode(results.getString(5));
+                address.setPhone(results.getString(6));             
+                address.setCreateDate(results.getDate(7));
+                address.setCreatedBy(results.getString(8));
+                address.setLastUpdate(results.getDate(9));
+                address.setLastUpdateBy(results.getString(10));
+            }
+            
+            closeDbConnection();
+            return address;
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+           }
 }

@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
@@ -27,6 +29,7 @@ import javafx.stage.Stage;
 import wetsu195.Data.DbMgr;
 import wetsu195.Data.model.Address;
 import wetsu195.Data.model.City;
+import wetsu195.Data.model.ClientView;
 import wetsu195.Data.model.Country;
 import wetsu195.Data.model.Customer;
 
@@ -91,7 +94,6 @@ public class ClientController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
     }
 
     @FXML
@@ -99,7 +101,6 @@ public class ClientController implements Initializable {
         Stage thisStage = (Stage) cancel.getScene().getWindow();
         thisStage.close();
     }
-
 
     public boolean validateInput() {
         boolean valid = true;
@@ -128,9 +129,16 @@ public class ClientController implements Initializable {
 
     @FXML
     public Integer buildCustomer() {
-        //only building the values the user has entered. Other info will be populated at DB call time.
+        buttonbar.setDisable(true);
 
-        if (validateInput()) {
+        //only building the values the user has entered. Other info will be populated at DB call time.
+        int successful = 0;
+        if (!validateInput()) {
+            
+            buttonbar.setDisable(false);
+            showInvalidInput();
+            
+        } else {
             Customer customer = new Customer();
             customer.setCustomerName(name.getText());
             customer.setActive(active.isSelected());
@@ -148,20 +156,44 @@ public class ClientController implements Initializable {
             newAddress.setPhone(phone.getText());
 
             try {
-                return db.saveNewCustomer(customer, newAddress, newCity, newCountry);
+                successful = db.saveNewCustomer(customer, newAddress, newCity, newCountry);
             } catch (SQLException ex) {
                 Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return null;
-        } else {
-            showInvalidInput();
+            cancel();
         }
-        return null;
+        
+        return successful;
     }
 
     private void showInvalidInput() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Invalid Input");
+        alert.setHeaderText("Input for this client is not valid.");
+        alert.setContentText("Please verify the client's detalis and correct the values.");
+        alert.showAndWait();
+
     }
+
+    void populateSelectedClient(ClientView clickedClient) {
+        try {
+            Customer customer = db.getCustomer(clickedClient.getCustomerId());
+            name.setText(customer.getCustomerName());
+            
+            
+            
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+    }
+
+    void setModifyFields() {
+        
+    }
+
 }

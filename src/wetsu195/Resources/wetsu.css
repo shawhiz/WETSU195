@@ -95,6 +95,36 @@
     -fx-border-width: 0;
     -fx-border-color: #FFFFFF;
     -fx-box-border: #FFFFFF;
+    
+}
+
+.table-view {
+    -fx-background-color: #FFF;
+    -fx-fill: #FFF;
+    -fx-text-fill: #406028;
+    
+}
+.table-view .column-header,
+.table-view .column-header .filler,
+.table-view .column-header-background .filler
+{
+    -fx-background-color: #FFF;
+    -fx-fill: #FFF;
+    -fx-text-fill: #406028;
+    -fx-font-size: 20;
+    -fx-border-width: 0px 0px 0px 0px;
+    -fx-border-color: #eee;
+    -fx-border-style: hidden hidden hidden hidden; 
+}
+
+.table-view .column {
+    -fx-border-width: 0px 1px 0px 1px;
+    -fx-border-color: #eee;
+    -fx-border-style: hidden solid hidden solid; 
+}
+
+.table-view .row {
+    -fx-background-color: #FFF;
 }
 
 .text-area{
@@ -114,4 +144,6 @@
     -fx-background-color: #eee;
     -fx-padding: 1;
 }
+
+
 
