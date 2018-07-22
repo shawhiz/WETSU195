@@ -181,6 +181,7 @@ public class ClientController implements Initializable {
         try {
             Customer customer = db.getCustomer(clickedClient.getCustomerId());
             name.setText(customer.getCustomerName());
+            Address address = db.getAddress(customer.getAddressId());
             
             
             
