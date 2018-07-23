@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" stylesheets="@Resources/wetsu.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wetsu195.ClientsController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" stylesheets="@Resources/wetsu.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wetsu195.AppointmentsController">
     <children>
-        <TextField fx:id="clientSearchField" layoutX="823.0" layoutY="45.0" prefHeight="35.0" prefWidth="237.0" promptText="Search Appointments" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="10.0" />
-        <ListView fx:id="appointmentsList" layoutX="47.0" layoutY="160.0" prefHeight="637.0" prefWidth="1010.0" styleClass="no-borders" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="100.0" />
+        <TextField fx:id="appointmentSearchField" layoutX="823.0" layoutY="45.0" prefHeight="35.0" prefWidth="237.0" promptText="Search Appointments" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="10.0" />
+        <TableView fx:id="appointmentsList" layoutX="47.0" layoutY="160.0" prefHeight="678.0" prefWidth="1040.0" styleClass="no-borders" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="106.0">
+         <columns>
+            <TableColumn fx:id="titleColumn" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="Title" />
+            <TableColumn fx:id="descriptionColumn" maxWidth="210.0" minWidth="210.0" prefWidth="210.0" text="Description" />
+            <TableColumn fx:id="locationColumn" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" text="Location" />
+            <TableColumn fx:id="customerColumn" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" text="Customer" />
+            <TableColumn fx:id="startColumn" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="Start" />
+            <TableColumn fx:id="endColumn" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="End" />
+         </columns></TableView>
         <Label fx:id="header" layoutX="47.0" layoutY="38.0" styleClass="header" text="Appointments" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="8.0" />
         <Separator fx:id="headerLine" layoutX="51.0" layoutY="82.0" prefHeight="7.0" prefWidth="1020.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="50.0" />
-        <Button fx:id="addAppointmentsButton" layoutX="51.0" layoutY="113.0" mnemonicParsing="false" onAction="#showClientScreen" text="+Add Appointment" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="60.0" />
+        <Button fx:id="addAppointmentsButton" layoutX="51.0" layoutY="113.0" mnemonicParsing="false" onAction="#showAppointmentScreen" text="+Add Appointment" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="60.0" />
     </children>
     <styleClass>
         <String fx:value="root" />

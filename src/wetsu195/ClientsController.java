@@ -69,8 +69,7 @@ public class ClientsController implements Initializable {
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        
+    public void initialize(URL url, ResourceBundle rb) {   
         populateTable();
         
 

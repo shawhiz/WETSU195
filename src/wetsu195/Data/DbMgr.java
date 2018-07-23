@@ -5,6 +5,7 @@
  */
 package wetsu195.Data;
 
+import wetsu195.Data.model.AppointmentView;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -47,7 +48,7 @@ public abstract class DbMgr {
     private static User activeUser = new User();
     
     private static ObservableList<ClientView> clientView = FXCollections.observableArrayList();
-    private static ObservableList<AppointmentView> appointmentview = FXCollections.observableArrayList();
+    private static ObservableList<AppointmentView> appointmentView = FXCollections.observableArrayList();
     
     private void connectToDb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
@@ -278,6 +279,46 @@ public abstract class DbMgr {
             }
             closeDbConnection();
             return clientView;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+    
+        public ObservableList<AppointmentView> getAppointmentView() {
+        try {
+            appointmentView.clear();
+            connectToDb();
+            String sql = "SELECT * from appointmentView";
+            Statement statement = dbConnection.createStatement();
+            ResultSet results = statement.executeQuery(sql);
+
+            while (results.next()) {
+                
+                Date startDate = results.getDate(7);
+                Date stopDate = results.getDate(8);
+                
+                
+                
+                AppointmentView appointment = new AppointmentView();
+                appointment.setAppointmentId(new SimpleIntegerProperty(results.getInt(1)));
+                appointment.setTitle(new SimpleStringProperty(results.getString(2)));
+                appointment.setDescription(new SimpleStringProperty(results.getString(3)));
+                appointment.setLocation(new SimpleStringProperty(results.getString(4)));
+                appointment.setContact(new SimpleStringProperty(results.getString(5)));
+                appointment.setCustomerName(new SimpleStringProperty(results.getString(6)));
+                appointment.setUrl(new SimpleStringProperty(results.getString(7)));
+                appointment.setStartDate(results.getDate(7));
+                appointment.setStopDate(results.getDate(8));
+ 
+                appointmentView.add(appointment);
+            }
+            closeDbConnection();
+            return appointmentView;
             
         } catch (SQLException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
