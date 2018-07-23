@@ -47,6 +47,7 @@ public abstract class DbMgr {
     private static User activeUser = new User();
     
     private static ObservableList<ClientView> clientView = FXCollections.observableArrayList();
+    private static ObservableList<AppointmentView> appointmentview = FXCollections.observableArrayList();
     
     private void connectToDb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
