@@ -110,6 +110,7 @@ public class LoginController implements Initializable {
             Stage mainStage = new Stage();
             mainStage.setScene(mainScene);
             mainStage.show();
+            mainStage.setTitle("Shannon Moore - Smoo182 - C195");
             Stage thisStage = (Stage) login.getScene().getWindow();
             thisStage.close();
         

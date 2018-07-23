@@ -63,8 +63,7 @@ public class ClientsController implements Initializable {
     private TableColumn<ClientView, String> clientAddress;
     @FXML
     private TableColumn<ClientView, Integer> clientAppointments;
-    @FXML
-    private TableColumn<ClientView, String> clientAction;
+
 
     /**
      * Initializes the controller class.
@@ -72,29 +71,63 @@ public class ClientsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-        clientName.prefWidthProperty().bind(clientList.widthProperty().multiply(.3));
+        populateTable();
+        
+
+    }
+
+        @FXML
+        private void showClientScreen() throws IOException {
+            Parent parent = FXMLLoader.load(getClass().getResource("Client.fxml"));
+            Scene mainScene = new Scene(parent);
+            Stage mainStage = new Stage();
+            mainStage.setScene(mainScene);
+            mainStage.show();
+        }
+
+    private boolean editClient(ClientView clickedClient) {
+      try {
+          FXMLLoader loader = new FXMLLoader();
+          loader.setLocation(getClass().getResource("Client.fxml"));
+          Parent clientScreen = loader.load();
+          Scene clientScene = new Scene(clientScreen);
+          ClientController controller = loader.getController();
+          controller.populateSelectedClient(clickedClient);
+          controller.setModifyFields();
+          Stage clientStage = new Stage();
+          clientStage.setScene(clientScene);
+          clientStage.show();
+
+      } catch (IOException ex) {
+            Logger.getLogger(ClientsController.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+      return true;
+    }
+
+
+    public void populateTable() {
+clientName.prefWidthProperty().bind(clientList.widthProperty().multiply(.3));
         clientPhone.prefWidthProperty().bind(clientList.widthProperty().multiply(.2));
         clientActive.prefWidthProperty().bind(clientList.widthProperty().multiply(.1));
         clientAddress.prefWidthProperty().bind(clientList.widthProperty().multiply(.3));
         clientAppointments.prefWidthProperty().bind(clientList.widthProperty().multiply(.1));
-        
-        clientList.setRowFactory( tv -> {
-            TableRow<ClientView> row = new TableRow<>();
-            row.setOnMouseClicked( event -> {
-                if( event.getClickCount() ==2 && (! row.isEmpty())){
-                    ClientView clickedClient = row.getItem();
-                    editClient(clickedClient);              
-                }
-            });
-            return row;
-        });
-        
         
         clientName.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         clientPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
         clientActive.setCellValueFactory(new PropertyValueFactory<>("active"));
         clientAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
         clientAppointments.setCellValueFactory(new PropertyValueFactory<>("appointmentCount"));
+        
+         clientList.setRowFactory( tv -> {
+            TableRow<ClientView> row = new TableRow<>();
+            row.setOnMouseClicked( event -> {
+                if( event.getClickCount() ==2 && (! row.isEmpty())){
+                    ClientView clickedClient = row.getItem();
+                     editClient(clickedClient);                    
+                }
+            });
+            return row;
+        });
 
         FilteredList<ClientView> filteredClients = new FilteredList<>(db.getClientView(), p -> true);
 
@@ -117,41 +150,7 @@ public class ClientsController implements Initializable {
         
         SortedList<ClientView> sortedClients = new SortedList<>(filteredClients);
         sortedClients.comparatorProperty().bind(clientList.comparatorProperty());
-        clientList.setItems(sortedClients);
-    }
-
-        @FXML
-        private void showClientScreen() throws IOException {
-            Parent parent = FXMLLoader.load(getClass().getResource("Client.fxml"));
-            Scene mainScene = new Scene(parent);
-            Stage mainStage = new Stage();
-            mainStage.setScene(mainScene);
-            mainStage.show();
-        }
-
-    private void editClient(ClientView clickedClient) {
-      try {
-          FXMLLoader loader = new FXMLLoader();
-          loader.setLocation(getClass().getResource("Client.fxml"));
-          Parent clientScreen = loader.load();
-          Scene clientScene = new Scene(clientScreen);
-          ClientController controller = loader.getController();
-          controller.populateSelectedClient(clickedClient);
-          controller.setModifyFields();
-          Stage clientStage = new Stage();
-          clientStage.setScene(clientScene);
-          clientStage.show();
-          
-          
-          
-          
-          
-          
-      } catch (IOException ex) {
-            Logger.getLogger(ClientsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-      
-    }
+        clientList.setItems(sortedClients);    }
 
     }
 

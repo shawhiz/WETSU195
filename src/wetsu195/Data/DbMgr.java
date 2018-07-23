@@ -18,6 +18,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
@@ -42,7 +45,9 @@ public abstract class DbMgr {
     private Connection dbConnection;
 
     private static User activeUser = new User();
-
+    
+    private static ObservableList<ClientView> clientView = FXCollections.observableArrayList();
+    
     private void connectToDb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         dbConnection = DriverManager.getConnection(url, user, password);
@@ -100,7 +105,7 @@ public abstract class DbMgr {
         return null;
     }
 
-    public Integer saveNewCustomer(Customer customer, Address address, City city, Country country) throws SQLException, ClassNotFoundException {;
+    public Integer saveNewCustomer(Customer customer, Address address, City city, Country country) throws SQLException, ClassNotFoundException {
         try {
 
             Integer countryId = createCountry(country);
@@ -207,7 +212,7 @@ public abstract class DbMgr {
         PreparedStatement statement = dbConnection.prepareStatement(sql);
         statement.setString(1, customer.getCustomerName()); //name
         statement.setInt(2, customer.getAddressId()); //addressId
-        statement.setInt(3, (customer.getActive())? 1: 0); // active
+        statement.setInt(3, (customer.getActive()) ? 1 : 0); // active
         statement.setString(4, date.toString()); //createDate
         statement.setString(5, activeUser.getUserName()); //createdBy
         statement.setString(6, activeUser.getUserName()); //lastUpdateBy     
@@ -226,54 +231,53 @@ public abstract class DbMgr {
         alert.setContentText("Database error reported: " + ex.getMessage());
         alert.showAndWait();
     }
-    
-    private List <Customer> getCustomers() throws SQLException{
-        
+
+    private List<Customer> getCustomers() throws SQLException {
+
         List<Customer> customers = new ArrayList<Customer>();
         String sql = "SELECT * FROM customer";
         Statement statement = dbConnection.createStatement();
         ResultSet results = statement.executeQuery(sql);
-        
-        while(results.next()) {
+
+        while (results.next()) {
             Customer customer = new Customer();
             customer.setCustomerId(results.getInt(1)); //id
             customer.setCustomerName(results.getString(2));
             customer.setAddressId(results.getInt(3));
-            customer.setActive((results.getInt(4) == 1)? true : false);
+            customer.setActive((results.getInt(4) == 1) ? true : false);
             customer.setCreateDate(results.getDate(5));
             customer.setCreatedBy(results.getString(6));
             customer.setLastUpdate(results.getDate(7));
             customer.setLastUpdateBy(results.getString(8));
-            
-            customers.add(customer);          
+
+            customers.add(customer);
         }
-        
+
         return customers;
     }
-    
-    
-    
-    public ObservableList<ClientView> getClientView () {
+
+    public ObservableList<ClientView> getClientView() {
         try {
-            ObservableList<ClientView> clientView = FXCollections.observableArrayList();
+            clientView.clear();
             connectToDb();
             String sql = "SELECT * from clientView";
             Statement statement = dbConnection.createStatement();
-            ResultSet results =  statement.executeQuery(sql);
-            
-            while (results.next()){
+            ResultSet results = statement.executeQuery(sql);
+
+            while (results.next()) {
                 ClientView client = new ClientView();
-                client.setCustomerId(results.getInt(1));
-                client.setCustomerName(results.getString(2));
-                client.setActive((results.getInt(3) == 1));
-                client.setPhone(results.getString(4));
-                client.setAddress(results.getString(5));
-                client.setAppointmentCount(results.getInt(6));
-                
+                client.setCustomerId(new SimpleIntegerProperty(results.getInt(1)));
+                client.setCustomerName(new SimpleStringProperty(results.getString(2)));
+                client.setActive(new SimpleBooleanProperty((results.getInt(3) == 1)));
+                client.setPhone(new SimpleStringProperty(results.getString(4)));
+                client.setAddress(new SimpleStringProperty(results.getString(5)));
+                client.setAppointmentCount(new SimpleIntegerProperty(results.getInt(6)));
+
                 clientView.add(client);
             }
-             closeDbConnection();
+            closeDbConnection();
             return clientView;
+            
         } catch (SQLException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -281,21 +285,21 @@ public abstract class DbMgr {
         }
 
         return null;
-     }
+    }
 
     public Customer getCustomer(Integer customerId) throws SQLException {
-        
+
         try {
             Customer customer = new Customer();
-            
+
             connectToDb();
             String sql = "SELECT * FROM customer where customerId = ? ";
-            
+
             PreparedStatement statement = dbConnection.prepareStatement(sql);
             statement.setInt(1, customerId); //username
             ResultSet results = statement.executeQuery();
-            
-            if(results.next()) {
+
+            if (results.next()) {
                 customer.setCustomerId(results.getInt(1)); //id
                 customer.setCustomerName(results.getString(2));
                 customer.setAddressId(results.getInt(3));
@@ -305,48 +309,266 @@ public abstract class DbMgr {
                 customer.setLastUpdate(results.getDate(7));
                 customer.setLastUpdateBy(results.getString(8));
             }
-            
+
             closeDbConnection();
             return customer;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-       
+
     }
 
     public Address getAddress(int addressId) {
-        
+
         try {
             Address address = new Address();
-            
+
             connectToDb();
             String sql = "SELECT * FROM address where addressId = ? ";
-            
+
             PreparedStatement statement = dbConnection.prepareStatement(sql);
-            statement.setInt(1, addressId); 
+            statement.setInt(1, addressId);
             ResultSet results = statement.executeQuery();
-            
-            if(results.next()) {
+
+            if (results.next()) {
                 address.setAddressId(results.getInt(1)); //id
                 address.setAddress(results.getString(2));
                 address.setAddress2(results.getString(3));
-                address.setCityId((results.getInt(4) == 1));
+                address.setCityId(results.getInt(4));
                 address.setPostalCode(results.getString(5));
-                address.setPhone(results.getString(6));             
+                address.setPhone(results.getString(6));
                 address.setCreateDate(results.getDate(7));
                 address.setCreatedBy(results.getString(8));
                 address.setLastUpdate(results.getDate(9));
                 address.setLastUpdateBy(results.getString(10));
             }
-            
+
             closeDbConnection();
             return address;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public City getCity(int cityId) {
+
+        try {
+            City city = new City();
+
+            connectToDb();
+            String sql = "SELECT * FROM city where cityId = ? ";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, cityId);
+            ResultSet results = statement.executeQuery();
+
+            if (results.next()) {
+                city.setCityId(results.getInt(1)); //id
+                city.setCity(results.getString(2));
+                city.setCountryId(results.getInt(3));
+                city.setCreateDate(results.getDate(4));
+                city.setCreatedBy(results.getString(5));
+                city.setLastUpdate(results.getDate(6));
+                city.setLastUpdateBy(results.getString(7));
+            }
+
+            closeDbConnection();
+            return city;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public Country getCountry(int countryId) {
+
+        try {
+            Country country = new Country();
+
+            connectToDb();
+            String sql = "SELECT * FROM country where countryId = ? ";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, countryId);
+            ResultSet results = statement.executeQuery();
+
+            if (results.next()) {
+                country.setCountryId(results.getInt(1)); //id
+                country.setCountry(results.getString(2));
+                country.setCreateDate(results.getDate(3));
+                country.setCreatedBy(results.getString(4));
+                country.setLastUpdate(results.getDate(5));
+                country.setLastUpdateBy(results.getString(6));
+            }
+
+            closeDbConnection();
+            return country;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-           }
+    }
+
+    public void deleteCustomer(Customer editedCustomer) {
+
+        try {
+            connectToDb();
+            String sql = "DELETE from customer where customerId = ? ";
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, editedCustomer.getCustomerId());
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void deleteAddress(Address editedAddress) {
+        try {
+            connectToDb();
+            String sql = "DELETE from address where addressId = ? ";
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, editedAddress.getAddressId());
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void deleteCity(City editedCity) {
+        try {
+            connectToDb();
+            String sql = "DELETE from city where cityId = ? ";
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, editedCity.getCityId());
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void deleteCountry(Country editedCountry) {
+        try {
+            connectToDb();
+            String sql = "DELETE from country where countryId = ? ";
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, editedCountry.getCountryId());
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void saveUpdatedCustomer(Customer editedCustomer, Address editedAddress, City editedCity, Country editedCountry) {
+        updateCustomer(editedCustomer);
+        updateAddress(editedAddress);
+        updateCity(editedCity);
+        updateCountry(editedCountry);
+    }
+
+    private void updateCustomer(Customer editedCustomer) {
+        try {
+            connectToDb();
+
+            String sql = "UPDATE customer set customerName = ?,   lastUpdateBy = ? where customerId = ?";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setString(1, editedCustomer.getCustomerName());
+            statement.setString(2, editedCustomer.getLastUpdateBy());
+            statement.setInt(3, editedCustomer.getCustomerId());
+
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateAddress(Address editedAddress) {
+        try {
+            connectToDb();
+
+            String sql = "UPDATE address set address = ?, address2 = ?, postalCode = ?, phone = ?,  lastUpdateBy = ? where addressId = ?";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setString(1, editedAddress.getAddress());
+            statement.setString(2, editedAddress.getAddress2());
+            statement.setString(3, editedAddress.getPostalCode());
+            statement.setString(4, editedAddress.getPhone());
+            statement.setString(5, editedAddress.getLastUpdateBy());
+            statement.setInt(6, editedAddress.getAddressId());
+
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateCity(City editedCity) {
+        try {
+            connectToDb();
+
+            String sql = "UPDATE city set city = ?, lastUpdateBy = ? where cityId = ?";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setString(1, editedCity.getCity()); //city
+            statement.setString(2, activeUser.getUserName()); //lastUpdateBy
+            statement.setInt(3, editedCity.getCityId()); //cityId
+
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateCountry(Country editedCountry) {
+        try {
+            connectToDb();
+
+            String sql = "UPDATE country set country = ?, lastUpdateBy = ? where countryId = ?";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setString(1, editedCountry.getCountry()); //country
+            statement.setString(2, activeUser.getUserName()); //lastUpdateBy
+            statement.setInt(3, editedCountry.getCountryId()); //countryId
+
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }

@@ -26,11 +26,15 @@
 }
 
 .button-cancel {
-    -fx-background-color: #666666
+    -fx-background-color: #999;
+}
+
+.button-delete{
+    -fx-background-color: #fff;
+    -fx-text-fill: #cc0000;
 }
 
 .button-date {
-    -fx-background-color: #fff;
     -fx-text-fill: #999;
     -fx-background-color: #eee;
     -fx-min-width:100;

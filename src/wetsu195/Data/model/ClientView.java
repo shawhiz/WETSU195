@@ -6,6 +6,10 @@
 package wetsu195.Data.model;
 
 import java.util.Date;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -13,56 +17,43 @@ import java.util.Date;
  */
 public class ClientView {
     
-    private Integer customerId;
+   protected IntegerProperty customerId;
     
-    private String customerName;
+   protected StringProperty customerName;
    
-    private boolean active;
+    protected BooleanProperty active;
     
-    private Date createDate;
+    protected Date createDate;
    
-    private String phone;
+    protected StringProperty phone;
         
-    private String address;
+    protected StringProperty address;
     
-    private Integer appointmentCount;
+   protected IntegerProperty appointmentCount;
 
-    public ClientView(Integer customerId, String customerName, boolean active, Date createDate, String phone, String address, Integer appointmentCount) {
-        this.customerId = customerId;
-        this.customerName = customerName;
-        this.active = active;
-        this.createDate = createDate;
-        this.phone = phone;
-        this.address = address;
-        this.appointmentCount = appointmentCount;
-    }
 
     public ClientView() {
           }
 
-    public Integer getCustomerId() {
+    public IntegerProperty getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(IntegerProperty customerId) {
         this.customerId = customerId;
     }
 
     public String getCustomerName() {
-        return customerName;
+        return customerName.get();
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+
 
     public boolean isActive() {
-        return active;
+        return active.get();
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+
 
     public Date getCreateDate() {
         return createDate;
@@ -73,28 +64,41 @@ public class ClientView {
     }
 
     public String getPhone() {
-        return phone;
+        return phone.get();
     }
 
-    public void setPhone(String phone) {
+
+
+    public String getAddress() {
+        return address.get();
+    }
+
+
+
+    public Integer getAppointmentCount() {
+        return appointmentCount.get();
+    }
+
+    public void setCustomerName(StringProperty customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setActive(BooleanProperty active) {
+        this.active = active;
+    }
+
+    public void setPhone(StringProperty phone) {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
+    public void setAddress(StringProperty address) {
         this.address = address;
     }
 
-    public Integer getAppointmentCount() {
-        return appointmentCount;
-    }
+    public void setAppointmentCount(SimpleIntegerProperty appointmentCount) {
+        this.appointmentCount = appointmentCount;    }
 
-    public void setAppointmentCount(Integer appointmentCount) {
-        this.appointmentCount = appointmentCount;
-    }
+
     
     
 }

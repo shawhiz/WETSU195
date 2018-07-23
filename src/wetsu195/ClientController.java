@@ -5,14 +5,18 @@
  */
 package wetsu195;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -89,17 +93,28 @@ public class ClientController implements Initializable {
     @FXML
     private RadioButton inactive;
 
+    //used to keep track of objects in edit mode.
+    private Customer editedCustomer;
+    private Address editedAddress;
+    private City editedCity;
+    private Country editedCountry;
+    @FXML
+    private Button delete;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        delete.visibleProperty().set(false);
     }
 
     @FXML
     public void cancel() {
-        Stage thisStage = (Stage) cancel.getScene().getWindow();
-        thisStage.close();
+             db.getClientView();
+            Stage thisStage = (Stage) cancel.getScene().getWindow();
+            thisStage.close();
+
     }
 
     public boolean validateInput() {
@@ -134,10 +149,10 @@ public class ClientController implements Initializable {
         //only building the values the user has entered. Other info will be populated at DB call time.
         int successful = 0;
         if (!validateInput()) {
-            
+
             buttonbar.setDisable(false);
             showInvalidInput();
-            
+
         } else {
             Customer customer = new Customer();
             customer.setCustomerName(name.getText());
@@ -164,9 +179,32 @@ public class ClientController implements Initializable {
             }
             cancel();
         }
-        
+
         return successful;
     }
+    
+    @FXML
+    public void updateCustomer(){
+        Integer successful = 0;
+        editedCustomer.setCustomerName(name.getText());
+        editedCustomer.setLastUpdateBy(db.getActiveUser().getUserName());
+        
+        editedAddress.setPhone(phone.getText());
+        editedAddress.setAddress(address1.getText());
+        editedAddress.setAddress2(address2.getText());
+        editedAddress.setLastUpdateBy(db.getActiveUser().getUserName());
+        
+        editedCity.setCity(city.getText());
+        editedCity.setLastUpdateBy(db.getActiveUser().getUserName());
+        
+        editedCountry.setCountry(country.getText());
+        editedCountry.setLastUpdateBy(db.getActiveUser().getUserName());
+
+         db.saveUpdatedCustomer(editedCustomer, editedAddress, editedCity, editedCountry);
+          cancel();
+
+        }
+        
 
     private void showInvalidInput() {
         Alert alert = new Alert(AlertType.ERROR);
@@ -176,25 +214,53 @@ public class ClientController implements Initializable {
         alert.showAndWait();
 
     }
+    
+    @FXML void saveCustomer()
+    {
+        if (editedCustomer != null){
+            updateCustomer();
+        }
+        else {
+            buildCustomer();
+        }       
+    }
 
     void populateSelectedClient(ClientView clickedClient) {
         try {
-            Customer customer = db.getCustomer(clickedClient.getCustomerId());
-            name.setText(customer.getCustomerName());
-            Address address = db.getAddress(customer.getAddressId());
-            
-            
-            
-            
-            
-        } catch (SQLException ex) {
+            editedCustomer = db.getCustomer(clickedClient.getCustomerId().get());   
+        name.setText(editedCustomer.getCustomerName());
+        editedAddress = db.getAddress(editedCustomer.getAddressId());
+        address1.setText(editedAddress.getAddress());
+        address2.setText(editedAddress.getAddress2());
+        phone.setText(editedAddress.getPhone());
+        zip.setText(editedAddress.getPostalCode());
+        editedCity = db.getCity(editedAddress.getAddressId());
+        city.setText(editedCity.getCity());
+        editedCountry = db.getCountry(editedCity.getCountryId());
+        country.setText(editedCountry.getCountry());
+        
+          } catch (SQLException ex) {
             Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
     }
 
     void setModifyFields() {
-        
+        delete.visibleProperty().set(true);
+    }
+    
+
+    @FXML
+    private void deleteCustomer(ActionEvent event) {
+        try {
+            db.deleteCountry(editedCountry);
+            db.deleteCity(editedCity);
+            db.deleteAddress(editedAddress);
+            db.deleteCustomer(editedCustomer);
+            cancel();
+
+        } catch (Exception ex) {
+            Logger.getLogger(ClientController.class.getName()).log(Level.WARNING, null, ex);
+        }
     }
 
 }

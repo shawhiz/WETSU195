@@ -19,7 +19,7 @@
       <Separator fx:id="divider" prefHeight="0.0" prefWidth="571.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="70.0" />
       <ButtonBar fx:id="buttonbar" layoutX="416.0" layoutY="495.0" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="34.0">
          <buttons>
-            <Button fx:id="save" defaultButton="true" mnemonicParsing="false" onAction="#buildCustomer" text="Save" />
+            <Button fx:id="save" defaultButton="true" mnemonicParsing="false" onAction="#saveCustomer" text="Save" />
             <Button fx:id="cancel" cancelButton="true" mnemonicParsing="false" onAction="#cancel" styleClass="button-cancel" text="Cancel" />
          </buttons>
       </ButtonBar>
@@ -128,5 +128,11 @@
             </HBox>
          </children>
       </VBox>
+      <Button fx:id="delete" layoutX="27.0" layoutY="537.0" maxWidth="120.0" minWidth="120.0" mnemonicParsing="false" onAction="#deleteCustomer" prefHeight="30.0" prefWidth="120.0" text="Delete Client" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="26.0">
+         <styleClass>
+            <String fx:value="button" />
+            <String fx:value="button-delete" />
+         </styleClass>
+      </Button>
    </children>
 </AnchorPane>
