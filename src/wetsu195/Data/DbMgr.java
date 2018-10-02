@@ -13,10 +13,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -298,12 +304,7 @@ public abstract class DbMgr {
             ResultSet results = statement.executeQuery(sql);
 
             while (results.next()) {
-                
-                Date startDate = results.getDate(7);
-                Date stopDate = results.getDate(8);
-                
-                
-                
+                             
                 AppointmentView appointment = new AppointmentView();
                 appointment.setAppointmentId(new SimpleIntegerProperty(results.getInt(1)));
                 appointment.setTitle(new SimpleStringProperty(results.getString(2)));
@@ -312,8 +313,8 @@ public abstract class DbMgr {
                 appointment.setContact(new SimpleStringProperty(results.getString(5)));
                 appointment.setCustomerName(new SimpleStringProperty(results.getString(6)));
                 appointment.setUrl(new SimpleStringProperty(results.getString(7)));
-                appointment.setStartDate(results.getDate(7));
-                appointment.setStopDate(results.getDate(8));
+                appointment.setStartDate(ToLocalTime(results.getTimestamp(8)));
+                appointment.setStopDate(ToLocalTime(results.getTimestamp(9)));
  
                 appointmentView.add(appointment);
             }
@@ -328,6 +329,39 @@ public abstract class DbMgr {
 
         return null;
     }
+        
+        
+     /*starts with the timestamp saved in db (GMT time)
+       gets the current user's local time zone, calculates the offset, and  adjusts the timestamp
+        the formats the date to a user friendly format for display
+        */
+     public String ToLocalTime(Timestamp timestamp){
+         TimeZone timezone = TimeZone.getDefault();      
+         Calendar cal = Calendar.getInstance();
+         cal.setTime(timestamp);
+         int offset = timezone.getRawOffset();    
+         cal.add(Calendar.MILLISECOND, offset);
+         Date adjusteddate = cal.getTime();
+         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy - hh:mm a");
+         String adjustedString = sdf.format(adjusteddate);
+         return adjustedString;    
+     }
+     
+     /*
+     Used to adjust a user selected date/time in thier time zone and adjust to GMT to saving in the db
+     */
+     public Calendar toGMTtime(Calendar localdate){       
+         TimeZone timezone = TimeZone.getDefault();
+         int offset = timezone.getRawOffset();
+         //reversing offset to get back to GMT time
+         offset = offset * (-1);
+         
+         localdate.add(Calendar.MILLISECOND, offset);
+        return localdate;    
+     }
+     
+     
+     
 
     public Customer getCustomer(Integer customerId) throws SQLException {
 

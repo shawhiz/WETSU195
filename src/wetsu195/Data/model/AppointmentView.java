@@ -5,8 +5,12 @@
  */
 package wetsu195.Data.model;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -22,8 +26,9 @@ public class AppointmentView {
     protected StringProperty contact;
     protected StringProperty customerName;
     protected StringProperty url;
-    protected Date startDate;
-    protected Date stopDate;
+    protected StringProperty startDate;
+    protected StringProperty stopDate;
+    
 
     public IntegerProperty getAppointmentId() {
         return appointmentId;
@@ -81,20 +86,21 @@ public class AppointmentView {
         this.url = url;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public String getStartDate() {
+        
+        return startDate.get();
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartDate(String startDate) {
+        this.startDate =  new SimpleStringProperty(startDate);
     }
 
-    public Date getStopDate() {
-        return stopDate;
+    public String getStopDate() {
+        return stopDate.get();
     }
 
-    public void setStopDate(Date stopDate) {
-        this.stopDate = stopDate;
+    public void setStopDate(String stopDate) {
+        this.stopDate = new SimpleStringProperty(stopDate);
     }
 
     public AppointmentView() {

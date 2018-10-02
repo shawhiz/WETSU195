@@ -68,17 +68,17 @@ public class AppointmentsController implements Initializable {
     private void populateTable() {
         titleColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.2));
         descriptionColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.2));
-        locationColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.2));
-        customerColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.2));
-        startColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.1));
-        endColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.1));
+        locationColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.1));
+        customerColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.1));
+        startColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.2));
+        endColumn.prefWidthProperty().bind(appointmentsList.widthProperty().multiply(.2));
         
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
         customerColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-        startColumn.setCellValueFactory(new PropertyValueFactory<>("start"));
-        endColumn.setCellValueFactory(new PropertyValueFactory<>("end"));  
+        startColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        endColumn.setCellValueFactory(new PropertyValueFactory<>("stopDate"));  
         appointmentsList.setRowFactory( v -> {
             TableRow<AppointmentView> row = new TableRow<>();
             row.setOnMouseClicked( event -> {

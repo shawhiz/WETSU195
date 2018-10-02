@@ -42,7 +42,7 @@ import wetsu195.Data.model.Customer;
  *
  * @author shawh
  */
-public class ClientController implements Initializable {
+public class AppointmentController implements Initializable {
 
     private static final DbMgr db = new DbMgr() {
     };
@@ -172,9 +172,9 @@ public class ClientController implements Initializable {
             try {
                 successful = db.saveNewCustomer(customer, newAddress, newCity, newCountry);
             } catch (SQLException ex) {
-                Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
             }
             cancel();
         }
@@ -238,7 +238,7 @@ public class ClientController implements Initializable {
         country.setText(editedCountry.getCountry());
         
           } catch (SQLException ex) {
-            Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -257,7 +257,7 @@ public class ClientController implements Initializable {
             cancel();
 
         } catch (Exception ex) {
-            Logger.getLogger(ClientController.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger(AppointmentController.class.getName()).log(Level.WARNING, null, ex);
         }
     }
 
