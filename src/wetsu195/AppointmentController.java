@@ -127,10 +127,10 @@ public class AppointmentController implements Initializable {
             Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        startminute.getItems().addAll(15, 30, 45, 00);
-        stopminute.getItems().addAll(15, 30, 45, 00);
-        starthour.getItems().addAll(9, 10, 11, 12, 13, 14, 15, 16, 17);
-        stophour.getItems().addAll(9, 10, 11, 12, 13, 14, 15, 16, 17);
+        startminute.getItems().addAll(00, 15, 30, 45);
+        stopminute.getItems().addAll(00, 15, 30, 45);
+        starthour.getItems().addAll(9, 10, 11, 12, 1, 2, 3, 4, 5);
+        stophour.getItems().addAll(9, 10, 11, 12, 1, 2, 3, 4, 5);
 
     }
 
@@ -180,7 +180,7 @@ public class AppointmentController implements Initializable {
             valid = false;
         }
 
-        if (validateTimes()== false) {
+        if (validateTimes() == false) {
             valid = false;
         }
         return valid;
@@ -209,6 +209,13 @@ public class AppointmentController implements Initializable {
 
             Calendar start = Calendar.getInstance();
             LocalDate apptdate = appointmentdate.getValue();
+            if (starthour.getValue() < 9) {
+                starthour.setValue(starthour.getValue() + 12);
+            }
+            if (stophour.getValue() < 9) {
+                stophour.setValue(stophour.getValue() + 12);
+            }
+
             start.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), starthour.getValue(), startminute.getValue(), 0);
             Calendar stop = Calendar.getInstance();
             stop.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), stophour.getValue(), stopminute.getValue(), 0);
@@ -254,6 +261,13 @@ public class AppointmentController implements Initializable {
         editedappointment.setDescription(description.getText());
         editedappointment.setLocation(location.getText());
 
+        if (starthour.getValue() < 9) {
+            starthour.setValue(starthour.getValue() + 12);
+        }
+        if (stophour.getValue() < 9) {
+            stophour.setValue(stophour.getValue() + 12);
+        }
+        
         Calendar start = Calendar.getInstance();
         LocalDate apptdate = appointmentdate.getValue();
         start.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), starthour.getValue(), startminute.getValue(), 0);
@@ -279,10 +293,10 @@ public class AppointmentController implements Initializable {
             location.setText(editedappointment.getLocation());
 
             Calendar startCalendar = editedappointment.getStart();
-            LocalDate localDate =LocalDate.of(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH));
+            LocalDate localDate = LocalDate.of(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH));
             Calendar stopCalendar = editedappointment.getEnd();
             appointmentdate.setValue(localDate);
-            
+
             starthour.setValue(startCalendar.get(Calendar.HOUR));
             startminute.setValue(startCalendar.get(Calendar.MINUTE));
             stophour.setValue(stopCalendar.get(Calendar.HOUR));

@@ -363,7 +363,6 @@ public abstract class DbMgr {
         //reversing offset to get back to GMT time
         offset = offset * (-1);
         localdate.add(Calendar.MILLISECOND, offset);
-        localdate.add(Calendar.MONTH, -1);
         Date date = localdate.getTime();
         Timestamp finaldate = new Timestamp(date.getTime());
         
@@ -746,8 +745,9 @@ public abstract class DbMgr {
             statement.setString(4, editedappointment.getDescription());
             statement.setString(5, editedappointment.getLocation());
             statement.setString(6, toGMTtime(editedappointment.getStart()));
-            statement.setString(3, toGMTtime(editedappointment.getEnd()));
+            statement.setString(7, toGMTtime(editedappointment.getEnd()));
             statement.setInt(8, activeUser.getUserId());
+            statement.setInt(9, editedappointment.getAppointmentId());
 
             statement.executeUpdate();
 
