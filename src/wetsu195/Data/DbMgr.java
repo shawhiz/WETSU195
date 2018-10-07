@@ -302,7 +302,6 @@ public abstract class DbMgr {
         try {
             appointmentView.clear();
             connectToDb();
-           Timestamp date = new Timestamp(new Date().getTime());
 
             String sql = "SELECT * from appointmentView where start > NOW()";
             Statement statement = dbConnection.prepareStatement(sql);
@@ -318,8 +317,8 @@ public abstract class DbMgr {
                 appointment.setContact(new SimpleStringProperty(results.getString(5)));
                 appointment.setCustomerName(new SimpleStringProperty(results.getString(6)));
                 appointment.setUrl(new SimpleStringProperty(results.getString(7)));
-                appointment.setStartDate(formatDate(ToLocalTime(results.getTimestamp(8))));
-                appointment.setStopDate(formatDate(ToLocalTime(results.getTimestamp(9))));
+                appointment.setStartDate(formatDate(toLocalTime(results.getTimestamp(8))));
+                appointment.setStopDate(formatDate(toLocalTime(results.getTimestamp(9))));
 
                 appointmentView.add(appointment);
             }
@@ -339,7 +338,7 @@ public abstract class DbMgr {
      gets the current user's local time zone, calculates the offset, and  adjusts the timestamp
     returns a calendar object holding the date/time in the user's zone
      */
-    public Calendar ToLocalTime(Timestamp timestamp) {
+     public Calendar toLocalTime(Timestamp timestamp) {
         TimeZone timezone = TimeZone.getDefault();
         Calendar cal = Calendar.getInstance();
         cal.setTime(timestamp);
@@ -350,6 +349,7 @@ public abstract class DbMgr {
     }
     public String formatDate(Calendar cal){
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd hh:mm a");
+        cal.add(Calendar.MONTH, -1);
        Date date = cal.getTime();
         return sdf.format(date);    
     }
@@ -716,8 +716,8 @@ public abstract class DbMgr {
                 appointment.setLocation(results.getString(5));
                 appointment.setContact(results.getString(6));
                 appointment.setUrl(results.getString(7));
-                appointment.setStart(ToLocalTime(results.getTimestamp(8)));
-                appointment.setEnd(ToLocalTime(results.getTimestamp(9)));
+                appointment.setStart(toLocalTime(results.getTimestamp(8)));
+                appointment.setEnd(toLocalTime(results.getTimestamp(9)));
 
             }
             closeDbConnection();
