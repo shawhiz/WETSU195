@@ -5,13 +5,19 @@
  */
 package wetsu195;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -20,6 +26,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import wetsu195.Data.DbMgr;
 import wetsu195.Data.model.AppointmentView;
 import wetsu195.Data.model.ClientView;
@@ -117,11 +124,34 @@ public class AppointmentsController implements Initializable {
     }
 
     @FXML
-    private void showAppointmentScreen(ActionEvent event) {
+    private void showAppointmentScreen(ActionEvent event) throws IOException {
+                   Parent parent = FXMLLoader.load(getClass().getResource("Appointment.fxml"));
+            Scene mainScene = new Scene(parent);
+            Stage mainStage = new Stage();
+            mainStage.setScene(mainScene);
+            mainStage.show();
     }
+    
+    
 
-    private void editAppointment(AppointmentView clickedAppointment) {
+   
+    private boolean editAppointment(AppointmentView clickedAppointment) {
+      try {
+          FXMLLoader loader = new FXMLLoader();
+          loader.setLocation(getClass().getResource("Appointment.fxml"));
+          Parent clientScreen = loader.load();
+          Scene clientScene = new Scene(clientScreen);
+          AppointmentController controller = loader.getController();
+          controller.populateSelectedAppointment(clickedAppointment);
+          controller.setModifyFields();
+          Stage appointmentStage = new Stage();
+          appointmentStage.setScene(clientScene);
+          appointmentStage.show();
+
+      } catch (IOException ex) {
+            Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+      return true;
     }
-
     
 }

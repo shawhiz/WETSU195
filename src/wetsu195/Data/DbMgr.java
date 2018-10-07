@@ -34,6 +34,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import wetsu195.Data.model.Address;
+import wetsu195.Data.model.Appointment;
 import wetsu195.Data.model.City;
 import wetsu195.Data.model.ClientView;
 import wetsu195.Data.model.Country;
@@ -52,10 +53,10 @@ public abstract class DbMgr {
     private Connection dbConnection;
 
     private static User activeUser = new User();
-    
+
     private static ObservableList<ClientView> clientView = FXCollections.observableArrayList();
     private static ObservableList<AppointmentView> appointmentView = FXCollections.observableArrayList();
-    
+
     private void connectToDb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         dbConnection = DriverManager.getConnection(url, user, password);
@@ -240,8 +241,9 @@ public abstract class DbMgr {
         alert.showAndWait();
     }
 
-    private List<Customer> getCustomers() throws SQLException {
+    public List<Customer> getCustomers() throws SQLException, ClassNotFoundException {
 
+        connectToDb();
         List<Customer> customers = new ArrayList<Customer>();
         String sql = "SELECT * FROM customer";
         Statement statement = dbConnection.createStatement();
@@ -260,6 +262,7 @@ public abstract class DbMgr {
 
             customers.add(customer);
         }
+        closeDbConnection();
 
         return customers;
     }
@@ -285,7 +288,7 @@ public abstract class DbMgr {
             }
             closeDbConnection();
             return clientView;
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -294,17 +297,19 @@ public abstract class DbMgr {
 
         return null;
     }
-    
-        public ObservableList<AppointmentView> getAppointmentView() {
+
+    public ObservableList<AppointmentView> getAppointmentView() {
         try {
             appointmentView.clear();
             connectToDb();
-            String sql = "SELECT * from appointmentView";
-            Statement statement = dbConnection.createStatement();
+           Timestamp date = new Timestamp(new Date().getTime());
+
+            String sql = "SELECT * from appointmentView where start > NOW()";
+            Statement statement = dbConnection.prepareStatement(sql);
             ResultSet results = statement.executeQuery(sql);
 
             while (results.next()) {
-                             
+
                 AppointmentView appointment = new AppointmentView();
                 appointment.setAppointmentId(new SimpleIntegerProperty(results.getInt(1)));
                 appointment.setTitle(new SimpleStringProperty(results.getString(2)));
@@ -313,14 +318,14 @@ public abstract class DbMgr {
                 appointment.setContact(new SimpleStringProperty(results.getString(5)));
                 appointment.setCustomerName(new SimpleStringProperty(results.getString(6)));
                 appointment.setUrl(new SimpleStringProperty(results.getString(7)));
-                appointment.setStartDate(ToLocalTime(results.getTimestamp(8)));
-                appointment.setStopDate(ToLocalTime(results.getTimestamp(9)));
- 
+                appointment.setStartDate(formatDate(ToLocalTime(results.getTimestamp(8))));
+                appointment.setStopDate(formatDate(ToLocalTime(results.getTimestamp(9))));
+
                 appointmentView.add(appointment);
             }
             closeDbConnection();
             return appointmentView;
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -329,39 +334,86 @@ public abstract class DbMgr {
 
         return null;
     }
-        
-        
-     /*starts with the timestamp saved in db (GMT time)
-       gets the current user's local time zone, calculates the offset, and  adjusts the timestamp
-        the formats the date to a user friendly format for display
-        */
-     public String ToLocalTime(Timestamp timestamp){
-         TimeZone timezone = TimeZone.getDefault();      
-         Calendar cal = Calendar.getInstance();
-         cal.setTime(timestamp);
-         int offset = timezone.getRawOffset();    
-         cal.add(Calendar.MILLISECOND, offset);
-         Date adjusteddate = cal.getTime();
-         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy - hh:mm a");
-         String adjustedString = sdf.format(adjusteddate);
-         return adjustedString;    
-     }
-     
-     /*
-     Used to adjust a user selected date/time in thier time zone and adjust to GMT to saving in the db
+
+    /*starts with the timestamp saved in db (GMT time)
+     gets the current user's local time zone, calculates the offset, and  adjusts the timestamp
+    returns a calendar object holding the date/time in the user's zone
      */
-     public Calendar toGMTtime(Calendar localdate){       
-         TimeZone timezone = TimeZone.getDefault();
-         int offset = timezone.getRawOffset();
-         //reversing offset to get back to GMT time
-         offset = offset * (-1);
-         
-         localdate.add(Calendar.MILLISECOND, offset);
-        return localdate;    
-     }
+    public Calendar ToLocalTime(Timestamp timestamp) {
+        TimeZone timezone = TimeZone.getDefault();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timestamp);
+        int offset = timezone.getRawOffset();
+        cal.add(Calendar.MILLISECOND, offset);
+
+        return cal;
+    }
+    public String formatDate(Calendar cal){
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd hh:mm a");
+       Date date = cal.getTime();
+        return sdf.format(date);    
+    }
+
+    /*
+     Used to adjust a user selected date/time in thier time zone and adjust to GMT in a timestamp format to save in the db
+     */
+    public String toGMTtime(Calendar localdate) {
+        TimeZone timezone = TimeZone.getDefault();
+        int offset = timezone.getRawOffset();
+        //reversing offset to get back to GMT time
+        offset = offset * (-1);
+        localdate.add(Calendar.MILLISECOND, offset);
+        localdate.add(Calendar.MONTH, -1);
+        Date date = localdate.getTime();
+        Timestamp finaldate = new Timestamp(date.getTime());
+        
      
-     
-     
+        return finaldate.toString();
+    }
+
+    public Integer saveNewAppointment(Appointment appointment) throws SQLException, ClassNotFoundException {
+        Integer newId = null;
+        Timestamp date = new Timestamp(new Date().getTime());
+        connectToDb();
+
+        String sql = "INSERT INTO appointment (customerid, title, description, location, contact, url, start, end, createdBy, lastUpdateBy, createDate) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?)";
+
+        PreparedStatement statement = dbConnection.prepareStatement(sql);
+        statement.setInt(1, appointment.getCustomerId());
+        statement.setString(2, appointment.getTitle());
+        statement.setString(3, appointment.getDescription());
+        statement.setString(4, appointment.getLocation());
+        statement.setString(5, appointment.getContact());
+        statement.setString(6, appointment.getUrl());
+        statement.setString(7, toGMTtime(appointment.getStart()));
+        statement.setString(8, toGMTtime(appointment.getEnd()));
+        statement.setInt(9, activeUser.getUserId());
+        statement.setInt(10, activeUser.getUserId());
+        statement.setString(11,  date.toString());
+        
+
+        if ((statement.executeUpdate()) > 0) {
+            newId = getInsertedId();
+        }
+        closeDbConnection();
+        return newId;
+    }
+
+    public void deleteAppointment(Appointment appointment) {
+        try {
+            connectToDb();
+            String sql = "DELETE from appointment where appointmentId = ? ";
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, appointment.getAppointmentId());
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public Customer getCustomer(Integer customerId) throws SQLException {
 
@@ -647,4 +699,61 @@ public abstract class DbMgr {
         }
     }
 
+    public Appointment getAppointment(int get) {
+        try {
+            connectToDb();
+            String sql = "SELECT appointmentId, customerId, title, description, location, contact, url, start, end  from appointment where appointmentid = ?";
+          
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setInt(1, get);
+            ResultSet results = statement.executeQuery();
+            Appointment appointment = new Appointment();
+
+            while (results.next()) {
+                appointment.setAppointmentId(results.getInt(1));
+                appointment.setCustomerId(results.getInt(2));
+                appointment.setTitle(results.getString(3));
+                appointment.setDescription(results.getString(4));
+                appointment.setLocation(results.getString(5));
+                appointment.setContact(results.getString(6));
+                appointment.setUrl(results.getString(7));
+                appointment.setStart(ToLocalTime(results.getTimestamp(8)));
+                appointment.setEnd(ToLocalTime(results.getTimestamp(9)));
+
+            }
+            closeDbConnection();
+            return appointment;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    public void saveUpdatedAppointment(Appointment editedappointment) {
+         try {
+            connectToDb();
+
+            String sql = "UPDATE appointment set contact = ?, url = ? ,title = ?, description = ?, location = ?, start =?,  end =?,  lastUpdateBy = ?  where appointmentId = ?";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setString(1, editedappointment.getContact());
+            statement.setString(2, editedappointment.getUrl());
+            statement.setString(3, editedappointment.getTitle());
+            statement.setString(4, editedappointment.getDescription());
+            statement.setString(5, editedappointment.getLocation());
+            statement.setString(6, toGMTtime(editedappointment.getStart()));
+            statement.setString(3, toGMTtime(editedappointment.getEnd()));
+            statement.setInt(8, activeUser.getUserId());
+
+            statement.executeUpdate();
+
+            closeDbConnection();
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

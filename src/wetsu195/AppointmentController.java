@@ -7,8 +7,15 @@ package wetsu195;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.JDBCType;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +28,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Separator;
@@ -30,8 +40,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import wetsu195.Data.DbMgr;
 import wetsu195.Data.model.Address;
+import wetsu195.Data.model.Appointment;
+import wetsu195.Data.model.AppointmentView;
 import wetsu195.Data.model.City;
 import wetsu195.Data.model.ClientView;
 import wetsu195.Data.model.Country;
@@ -50,11 +63,12 @@ public class AppointmentController implements Initializable {
     @FXML
     private AnchorPane root;
     @FXML
-    private Label title;
+    private TextField titletext;
     @FXML
     private Separator divider;
-    @FXML
     private ButtonBar buttonbar;
+    @FXML
+    private ChoiceBox<String> customerAppt;
     @FXML
     private Button save;
     @FXML
@@ -64,113 +78,145 @@ public class AppointmentController implements Initializable {
     @FXML
     private Label personal;
     @FXML
-    private TextField name;
-    @FXML
-    private TextField phone;
-    @FXML
-    private Label address;
-    @FXML
-    private TextField address1;
-
-    @FXML
-    private TextField address2;
-    @FXML
-    private HBox citstatezip;
-    @FXML
-    private TextField city;
-    @FXML
-    private TextField country;
-    @FXML
-    private TextField zip;
-    @FXML
-    private Label status;
-    @FXML
-    private HBox statusradio;
-    @FXML
-    private RadioButton active;
-    @FXML
-    private ToggleGroup activeStatus;
-    @FXML
-    private RadioButton inactive;
-
-    //used to keep track of objects in edit mode.
-    private Customer editedCustomer;
-    private Address editedAddress;
-    private City editedCity;
-    private Country editedCountry;
-    @FXML
     private Button delete;
+    @FXML
+    private TextField contact;
+    @FXML
+    private TextField url;
+    @FXML
+    private Label servicedetails;
+    @FXML
+    private TextField description;
+    @FXML
+    private TextField location;
+    @FXML
+    private DatePicker appointmentdate;
+    @FXML
+    private Label schedule;
+    @FXML
+    private ComboBox<Integer> stophour;
+    @FXML
+    private ComboBox<Integer> stopminute;
+    @FXML
+    private ComboBox<Integer> startminute;
+    @FXML
+    private ComboBox<Integer> starthour;
+
+    private Appointment editedappointment;
+    List<Customer> customers;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        delete.visibleProperty().set(false);
+        try {
+            delete.visibleProperty().set(false);
+            customers = db.getCustomers();
+            customers.stream().forEach((customer) -> {
+                customerAppt.getItems().add(customer.getCustomerName());
+            });
+        } catch (SQLException ex) {
+            customerAppt.setDisable(true);
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error: Customer List is empty");
+            alert.setContentText("You must add customers first.");
+            alert.showAndWait();
+            Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        startminute.getItems().addAll(15, 30, 45, 00);
+        stopminute.getItems().addAll(15, 30, 45, 00);
+        starthour.getItems().addAll(9, 10, 11, 12, 13, 14, 15, 16, 17);
+        stophour.getItems().addAll(9, 10, 11, 12, 13, 14, 15, 16, 17);
+
     }
 
     @FXML
     public void cancel() {
-             db.getClientView();
-            Stage thisStage = (Stage) cancel.getScene().getWindow();
-            thisStage.close();
+        db.getAppointmentView();
+        Stage thisStage = (Stage) cancel.getScene().getWindow();
+        thisStage.close();
 
+    }
+
+    public boolean validateTimes() {
+        boolean isvalid = true;
+        if (stophour.getValue() == 17 && stopminute.getValue() != 0) {
+            isvalid = false;
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setHeaderText("Appointment time selected is outside of business hours");
+            alert.setContentText("Appointments must end by 5pm");
+            alert.setTitle("Appointment falls outside business hours");
+            alert.showAndWait();
+        }
+        return isvalid;
     }
 
     public boolean validateInput() {
         boolean valid = true;
 
-        if (name.getText().isEmpty()) {
+        if (contact.getText().isEmpty()) {
             valid = false;
         }
-        if (phone.getText().isEmpty()) {
+        if (location.getText().isEmpty()) {
             valid = false;
         }
-        if (address1.getText().isEmpty()) {
+        if (appointmentdate.getValue() == null) {
             valid = false;
         }
-        if (city.getText().isEmpty()) {
+        if (starthour.getValue() == null) {
             valid = false;
         }
-        if (country.getText().isEmpty()) {
+        if (stophour.getValue() == null) {
             valid = false;
         }
-        if (zip.getText().isEmpty()) {
+        if (startminute.getValue() == null) {
+            valid = false;
+        }
+        if (stopminute.getValue() == null) {
             valid = false;
         }
 
+        if (validateTimes()== false) {
+            valid = false;
+        }
         return valid;
     }
 
-    public Integer buildCustomer() {
-        buttonbar.setDisable(true);
+    public Integer buildAppointment() {
 
         //only building the values the user has entered. Other info will be populated at DB call time.
         int successful = 0;
         if (!validateInput()) {
-
-            buttonbar.setDisable(false);
             showInvalidInput();
-
         } else {
-            Customer customer = new Customer();
-            customer.setCustomerName(name.getText());
-            customer.setActive(active.isSelected());
 
-            Country newCountry = new Country();
-            newCountry.setCountry(country.getText());
+            Appointment appointment = new Appointment();
 
-            City newCity = new City();
-            newCity.setCity(city.getText());
+            for (Customer customer : customers) {
+                if (customerAppt.getValue().toString() == customer.getCustomerName()) {
+                    appointment.setCustomerId(customer.getCustomerId());
+                }
+            }
+            appointment.setContact(contact.getText());
+            appointment.setUrl(url.getText());
+            appointment.setTitle(titletext.getText());
+            appointment.setDescription(description.getText());
+            appointment.setLocation(location.getText());
 
-            Address newAddress = new Address();
-            newAddress.setAddress(address1.getText());
-            newAddress.setAddress2(address2.getText());
-            newAddress.setPostalCode(zip.getText());
-            newAddress.setPhone(phone.getText());
+            Calendar start = Calendar.getInstance();
+            LocalDate apptdate = appointmentdate.getValue();
+            start.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), starthour.getValue(), startminute.getValue(), 0);
+            Calendar stop = Calendar.getInstance();
+            stop.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), stophour.getValue(), stopminute.getValue(), 0);
+            appointment.setStart(start);
+            appointment.setEnd(stop);
 
             try {
-                successful = db.saveNewCustomer(customer, newAddress, newCity, newCountry);
+                successful = db.saveNewAppointment(appointment);
             } catch (SQLException ex) {
                 Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
@@ -181,79 +227,81 @@ public class AppointmentController implements Initializable {
 
         return successful;
     }
-    
-    public void updateCustomer(){
-        Integer successful = 0;
-        editedCustomer.setCustomerName(name.getText());
-        editedCustomer.setLastUpdateBy(db.getActiveUser().getUserName());
-        
-        editedAddress.setPhone(phone.getText());
-        editedAddress.setAddress(address1.getText());
-        editedAddress.setAddress2(address2.getText());
-        editedAddress.setLastUpdateBy(db.getActiveUser().getUserName());
-        
-        editedCity.setCity(city.getText());
-        editedCity.setLastUpdateBy(db.getActiveUser().getUserName());
-        
-        editedCountry.setCountry(country.getText());
-        editedCountry.setLastUpdateBy(db.getActiveUser().getUserName());
-
-         db.saveUpdatedCustomer(editedCustomer, editedAddress, editedCity, editedCountry);
-          cancel();
-
-        }
-        
 
     private void showInvalidInput() {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Invalid Input");
-        alert.setHeaderText("Input for this client is not valid.");
-        alert.setContentText("Please verify the client's detalis and correct the values.");
+        alert.setHeaderText("Input for this appointment is not valid.");
+        alert.setContentText("Please verify the apointment's detalis and correct the values.");
         alert.showAndWait();
 
     }
-    
-    @FXML void saveCustomer()
-    {
-        if (editedCustomer != null){
-            updateCustomer();
+
+    @FXML
+    public void saveAppointment() {
+        if (editedappointment != null) {
+            updateAppointment();
+        } else {
+            buildAppointment();
         }
-        else {
-            buildCustomer();
-        }       
     }
 
-    void populateSelectedClient(ClientView clickedClient) {
+    private void updateAppointment() {
+
+        editedappointment.setContact(contact.getText());
+        editedappointment.setUrl(url.getText());
+        editedappointment.setTitle(titletext.getText());
+        editedappointment.setDescription(description.getText());
+        editedappointment.setLocation(location.getText());
+
+        Calendar start = Calendar.getInstance();
+        LocalDate apptdate = appointmentdate.getValue();
+        start.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), starthour.getValue(), startminute.getValue(), 0);
+        Calendar stop = Calendar.getInstance();
+        stop.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), stophour.getValue(), stopminute.getValue(), 0);
+        editedappointment.setStart(start);
+        editedappointment.setEnd(stop);
+        editedappointment.setLastUpdateBy(db.getActiveUser().getUserName());
+
+        db.saveUpdatedAppointment(editedappointment);
+        cancel();
+    }
+
+    void populateSelectedAppointment(AppointmentView clickedAppointment) {
         try {
-            editedCustomer = db.getCustomer(clickedClient.getCustomerId().get());   
-        name.setText(editedCustomer.getCustomerName());
-        editedAddress = db.getAddress(editedCustomer.getAddressId());
-        address1.setText(editedAddress.getAddress());
-        address2.setText(editedAddress.getAddress2());
-        phone.setText(editedAddress.getPhone());
-        zip.setText(editedAddress.getPostalCode());
-        editedCity = db.getCity(editedAddress.getAddressId());
-        city.setText(editedCity.getCity());
-        editedCountry = db.getCountry(editedCity.getCountryId());
-        country.setText(editedCountry.getCountry());
-        
-          } catch (SQLException ex) {
-            Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
+            editedappointment = db.getAppointment(clickedAppointment.getAppointmentId().get());
+            customerAppt.setValue(clickedAppointment.getCustomerName());
+            customerAppt.setDisable(true); //customer cannot be changed
+            contact.setText(editedappointment.getContact());
+            url.setText(editedappointment.getUrl());
+            titletext.setText(editedappointment.getTitle());
+            description.setText(editedappointment.getDescription());
+            location.setText(editedappointment.getLocation());
+
+            Calendar startCalendar = editedappointment.getStart();
+            LocalDate localDate =LocalDate.of(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH));
+            Calendar stopCalendar = editedappointment.getEnd();
+            appointmentdate.setValue(localDate);
+            
+            starthour.setValue(startCalendar.get(Calendar.HOUR));
+            startminute.setValue(startCalendar.get(Calendar.MINUTE));
+            stophour.setValue(stopCalendar.get(Calendar.HOUR));
+            stopminute.setValue(stopCalendar.get(Calendar.MINUTE));
+
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentController.class.getName()).log(Level.WARNING, null, ex);
+
         }
     }
 
     void setModifyFields() {
         delete.visibleProperty().set(true);
     }
-    
 
     @FXML
-    private void deleteCustomer(ActionEvent event) {
+    private void deleteAppointment(ActionEvent event) {
         try {
-            db.deleteCountry(editedCountry);
-            db.deleteCity(editedCity);
-            db.deleteAddress(editedAddress);
-            db.deleteCustomer(editedCustomer);
+            db.deleteAppointment(editedappointment);
             cancel();
 
         } catch (Exception ex) {

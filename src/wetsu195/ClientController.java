@@ -143,13 +143,11 @@ public class ClientController implements Initializable {
     }
 
     public Integer buildCustomer() {
-        buttonbar.setDisable(true);
 
         //only building the values the user has entered. Other info will be populated at DB call time.
         int successful = 0;
         if (!validateInput()) {
 
-            buttonbar.setDisable(false);
             showInvalidInput();
 
         } else {
