@@ -7,6 +7,14 @@ package wetsu195;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,12 +28,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import wetsu195.Data.DbMgr;
 import wetsu195.Data.model.AppointmentView;
@@ -63,12 +75,34 @@ public class AppointmentsController implements Initializable {
     private TextField appointmentSearchField;
     
     private static final DbMgr db = new DbMgr() { };
+    @FXML
+    private HBox calendarfilters;
+    @FXML
+    private RadioButton all;
+    @FXML
+    private ToggleGroup calendar;
+    @FXML
+    private RadioButton byweek;
+    @FXML
+    private RadioButton bymonth;
+    @FXML
+    private Pane calendarNav;
+    @FXML
+    private Button prevBtn;
+    @FXML
+    private Label visibleTimes;
+    @FXML
+    private Button nextBtn;
+    
+    LocalDateTime searchStart = LocalDateTime.MIN;
+    LocalDateTime searchStop = LocalDateTime.MAX;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        calendarNav.visibleProperty().set(false);
         populateTable();
     }    
 
@@ -98,6 +132,31 @@ public class AppointmentsController implements Initializable {
         });
         
         FilteredList<AppointmentView> filteredAppointments = new FilteredList<>(db.getAppointmentView(), p -> true);
+        
+        byweek.setOnAction(event -> {
+            LocalDateTime now = LocalDateTime.now();
+            DayOfWeek dayOfWeek = now.getDayOfWeek();
+            searchStart =now.plusDays(dayOfWeek.getValue()* -1);//sunday?
+            searchStop = now.plusDays(7-dayOfWeek.getValue());//saturday?      
+            visibleTimes.setText(searchStart.toLocalDate().toString() + " until " + searchStop.toLocalDate().toString());
+                        calendarNav.visibleProperty().set(true);
+
+                });
+        
+        bymonth.setOnAction(event -> {
+            LocalDate now = LocalDate.now();
+            int lastDay = now.getMonth().length(now.isLeapYear());          
+            searchStart = LocalDateTime.of(now.getYear(), now.getMonthValue(), 1, 0, 0);
+            searchStop = LocalDateTime.of(now.getYear(), now.getMonthValue(), lastDay, 0, 0);           
+            visibleTimes.setText(now.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+                   calendarNav.visibleProperty().set(true);
+
+                });
+        all.setOnAction(event -> {
+            calendarNav.visibleProperty().set(false);
+        });
+        
+        
         appointmentSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredAppointments.setPredicate(appointmentView -> {
                 if(newValue == null || newValue.isEmpty()) {
@@ -108,7 +167,17 @@ public class AppointmentsController implements Initializable {
                 
                 if(appointmentView.getTitle().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
-                } else {
+                }
+                 if(appointmentView.getLocation().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } if(appointmentView.getDescription().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } if(appointmentView.getCustomerName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } if(appointmentView.getContact().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                 }                                   
+                else {
                     return false;
                 }
             }

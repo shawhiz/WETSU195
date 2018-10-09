@@ -121,5 +121,10 @@
             <Font size="14.0" />
          </font>
       </Label>
+      <Label fx:id="overlaperror" layoutX="403.0" layoutY="519.0" prefHeight="67.0" prefWidth="174.0" text="The times selected overlap an existing appointment. Please choose another time" textFill="RED" visible="false" wrapText="true">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

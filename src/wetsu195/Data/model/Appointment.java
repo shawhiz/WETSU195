@@ -6,6 +6,8 @@
 package wetsu195.Data.model;
 
 import com.sun.javafx.css.CalculatedValue;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -28,9 +30,9 @@ public class Appointment  {
  
     private String url;
 
-    private Calendar start;
+    private Timestamp start;
     
-    private Calendar end;
+    private Timestamp end;
     
     private Date createDate;
     
@@ -52,7 +54,7 @@ public class Appointment  {
         this.appointmentId = appointmentId;
     }
 
-    public Appointment(Integer appointmentId, int customerId, String title, String description, String location, String contact, String url, Calendar start, Calendar end, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
+    public Appointment(Integer appointmentId, int customerId, String title, String description, String location, String contact, String url, Timestamp start, Timestamp end, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
         this.appointmentId = appointmentId;
         this.customerId = customerId;
         this.title = title;
@@ -124,19 +126,19 @@ public class Appointment  {
         this.url = url;
     }
 
-    public Calendar getStart() {
+    public Timestamp getStart() {
         return start;
     }
 
-    public void setStart(Calendar start) {
+    public void setStart(Timestamp start) {
         this.start = start;
     }
 
-    public Calendar getEnd() {
+    public Timestamp getEnd() {
         return end;
     }
 
-    public void setEnd(Calendar end) {
+    public void setEnd(Timestamp end) {
         this.end = end;
     }
 

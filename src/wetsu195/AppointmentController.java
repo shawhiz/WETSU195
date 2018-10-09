@@ -5,13 +5,19 @@
  */
 package wetsu195;
 
+import com.mysql.jdbc.util.TimezoneDump;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.JDBCType;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,6 +82,8 @@ public class AppointmentController implements Initializable {
     @FXML
     private VBox clientinfo;
     @FXML
+    private Label overlaperror;
+    @FXML
     private Label personal;
     @FXML
     private Button delete;
@@ -110,7 +118,9 @@ public class AppointmentController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
         try {
+            overlaperror.visibleProperty().set(false);
             delete.visibleProperty().set(false);
             customers = db.getCustomers();
             customers.stream().forEach((customer) -> {
@@ -207,29 +217,45 @@ public class AppointmentController implements Initializable {
             appointment.setDescription(description.getText());
             appointment.setLocation(location.getText());
 
-            Calendar start = Calendar.getInstance();
-            LocalDate apptdate = appointmentdate.getValue();
-            if (starthour.getValue() < 9) {
-                starthour.setValue(starthour.getValue() + 12);
+            LocalDate localDate = appointmentdate.getValue();
+            
+            if(starthour.getValue() < 9){
+                starthour.setValue(starthour.getValue()+12);
             }
-            if (stophour.getValue() < 9) {
-                stophour.setValue(stophour.getValue() + 12);
+            if(stophour.getValue() <9){
+                stophour.setValue(stophour.getValue()+12);
             }
+                              
+            LocalTime localstart = LocalTime.of(starthour.getValue(), startminute.getValue());
+            LocalTime localstop = LocalTime.of(stophour.getValue(), stopminute.getValue());
+            
+            LocalDateTime localDateTimeStart = LocalDateTime.of(localDate, localstart);
+            LocalDateTime localDateTimeStop = LocalDateTime.of(localDate, localstop);
+            
+            
 
-            start.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), starthour.getValue(), startminute.getValue(), 0);
-            Calendar stop = Calendar.getInstance();
-            stop.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), stophour.getValue(), stopminute.getValue(), 0);
-            appointment.setStart(start);
-            appointment.setEnd(stop);
+            ZoneId usersZoneId = ZoneId.systemDefault();
+            ZonedDateTime startZoneUTC = localDateTimeStart.atZone(usersZoneId).withZoneSameInstant(ZoneId.of("UTC"));
+            ZonedDateTime stopZonedUTC = localDateTimeStop.atZone(usersZoneId).withZoneSameInstant(ZoneId.of("UTC"));
 
-            try {
-                successful = db.saveNewAppointment(appointment);
-            } catch (SQLException ex) {
-                Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
+            Timestamp utcStartTimestamp = Timestamp.valueOf(startZoneUTC.toLocalDateTime());
+            Timestamp utcStopTimestamp = Timestamp.valueOf(stopZonedUTC.toLocalDateTime());
+
+            appointment.setStart(utcStartTimestamp);
+            appointment.setEnd(utcStopTimestamp);
+
+            if (db.validateOverlap(appointment)) {
+                try {
+                    successful = db.saveNewAppointment(appointment);
+                } catch (SQLException ex) {
+                    Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(AppointmentController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                cancel();
+            } else {
+                invalidAppointment();
             }
-            cancel();
         }
 
         return successful;
@@ -246,6 +272,7 @@ public class AppointmentController implements Initializable {
 
     @FXML
     public void saveAppointment() {
+        overlaperror.setVisible(false);
         if (editedappointment != null) {
             updateAppointment();
         } else {
@@ -260,25 +287,39 @@ public class AppointmentController implements Initializable {
         editedappointment.setTitle(titletext.getText());
         editedappointment.setDescription(description.getText());
         editedappointment.setLocation(location.getText());
-
+        
+        
+        LocalDate localDate = appointmentdate.getValue();
+        LocalTime localstart = LocalTime.of(starthour.getValue(), startminute.getValue());
+        LocalTime localstop = LocalTime.of(stophour.getValue(), stopminute.getValue());
+        
         if (starthour.getValue() < 9) {
-            starthour.setValue(starthour.getValue() + 12);
+         localstart = LocalTime.of(starthour.getValue()+12, startminute.getValue());
         }
         if (stophour.getValue() < 9) {
-            stophour.setValue(stophour.getValue() + 12);
+            localstop = LocalTime.of(stophour.getValue()+12, stopminute.getValue());
         }
-        
-        Calendar start = Calendar.getInstance();
-        LocalDate apptdate = appointmentdate.getValue();
-        start.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), starthour.getValue(), startminute.getValue(), 0);
-        Calendar stop = Calendar.getInstance();
-        stop.set(apptdate.getYear(), apptdate.getMonthValue(), apptdate.getDayOfMonth(), stophour.getValue(), stopminute.getValue(), 0);
-        editedappointment.setStart(start);
-        editedappointment.setEnd(stop);
-        editedappointment.setLastUpdateBy(db.getActiveUser().getUserName());
 
-        db.saveUpdatedAppointment(editedappointment);
-        cancel();
+        LocalDateTime localDateTimeStart = LocalDateTime.of(localDate, localstart);
+        LocalDateTime localDateTimeStop = LocalDateTime.of(localDate, localstop);
+
+        ZoneId usersZoneId = ZoneId.systemDefault();
+        ZonedDateTime startZoneUTC = localDateTimeStart.atZone(usersZoneId).withZoneSameInstant(ZoneId.of("UTC"));
+        ZonedDateTime stopZonedUTC = localDateTimeStop.atZone(usersZoneId).withZoneSameInstant(ZoneId.of("UTC"));
+
+        Timestamp utcStartTimestamp = Timestamp.valueOf(startZoneUTC.toLocalDateTime());
+        Timestamp utcStopTimestamp = Timestamp.valueOf(stopZonedUTC.toLocalDateTime());
+
+        editedappointment.setStart(utcStartTimestamp);
+        editedappointment.setEnd(utcStopTimestamp);
+        editedappointment.setLastUpdateBy(db.getActiveUser().getUserId().toString());
+
+        if (db.validateOverlap(editedappointment)) {
+            db.saveUpdatedAppointment(editedappointment);
+            cancel();
+        } else {
+            invalidAppointment();
+        }
     }
 
     void populateSelectedAppointment(AppointmentView clickedAppointment) {
@@ -292,19 +333,31 @@ public class AppointmentController implements Initializable {
             description.setText(editedappointment.getDescription());
             location.setText(editedappointment.getLocation());
 
-            Calendar startCalendar = editedappointment.getStart();
-            LocalDate localDate = LocalDate.of(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH));
-            Calendar stopCalendar = editedappointment.getEnd();
-            appointmentdate.setValue(localDate);
+            Timestamp tsStart = editedappointment.getStart();
+            tsStart.toInstant();
+            ZonedDateTime zdt = ZonedDateTime.ofInstant(tsStart.toLocalDateTime(), ZoneOffset.UTC, ZoneId.systemDefault());
 
-            starthour.setValue(startCalendar.get(Calendar.HOUR));
-            startminute.setValue(startCalendar.get(Calendar.MINUTE));
-            stophour.setValue(stopCalendar.get(Calendar.HOUR));
-            stopminute.setValue(stopCalendar.get(Calendar.MINUTE));
+            Timestamp tsend = editedappointment.getEnd();
+            tsend.toInstant();
+            ZonedDateTime zdtend = ZonedDateTime.ofInstant(tsend.toLocalDateTime(), ZoneOffset.UTC, ZoneId.systemDefault());
+
+            appointmentdate.setValue(zdt.toLocalDate());
+            if (zdt.getHour() > 12) {
+                starthour.setValue(zdt.getHour() - 12);
+            } else {
+                starthour.setValue(zdt.getHour());
+            }
+            startminute.setValue(zdt.getMinute());
+            if (zdtend.getHour() > 12) {
+                stophour.setValue(zdtend.getHour() - 12);
+            } else {
+                stophour.setValue(zdtend.getHour());
+            }
+
+            stopminute.setValue(zdtend.getMinute());
 
         } catch (Exception ex) {
             Logger.getLogger(AppointmentController.class.getName()).log(Level.WARNING, null, ex);
-
         }
     }
 
@@ -321,6 +374,10 @@ public class AppointmentController implements Initializable {
         } catch (Exception ex) {
             Logger.getLogger(AppointmentController.class.getName()).log(Level.WARNING, null, ex);
         }
+    }
+
+    private void invalidAppointment() {
+        overlaperror.visibleProperty().set(true);
     }
 
 }
