@@ -5,17 +5,31 @@
  */
 package wetsu195;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import wetsu195.Data.DbMgr;
+import wetsu195.Data.model.Appointment;
+import static wetsu195.Main.getDefaultLocale;
 
 /**
  * FXML Controller class
@@ -46,6 +60,8 @@ public class MainAppController implements Initializable {
     private Button reports;
     @FXML
     private Button signout;
+    private static final DbMgr db = new DbMgr() {
+    };
 
     @FXML
     public void showClients() throws IOException {
@@ -62,13 +78,6 @@ public class MainAppController implements Initializable {
     }
 
     @FXML
-    public void showCalendar() throws IOException {
-        changeActiveLink(calendar);
-        AnchorPane calendarPane = FXMLLoader.load(getClass().getResource("Calendar.fxml"));
-        contentHolder.getChildren().setAll(calendarPane);
-    }
-
-    @FXML
     public void showReports() throws IOException {
         changeActiveLink(reports);
         AnchorPane reportsPane = FXMLLoader.load(getClass().getResource("Reports.fxml"));
@@ -76,14 +85,19 @@ public class MainAppController implements Initializable {
     }
 
     public void signOut() {
-        //
+        db.setActiveUser(null);
+
+        showLoginScreen();
+        Stage thisStage = (Stage) signout.getScene().getWindow();
+        thisStage.close();
+
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        checkForAlerts();
     }
 
-    
     @FXML
     private void changeActiveLink(Button button) {
         if (button == clients) {
@@ -98,12 +112,6 @@ public class MainAppController implements Initializable {
             appointments.getStyleClass().remove("active-nav");
         }
 
-        if (button == calendar) {
-            calendar.getStyleClass().add("active-nav");
-        } else {
-            calendar.getStyleClass().remove("active-nav");
-        }
-
         if (button == reports) {
             reports.getStyleClass().add("active-nav");
         } else {
@@ -112,4 +120,43 @@ public class MainAppController implements Initializable {
 
     }
 
+    private void checkForAlerts() {
+        Appointment upcomingAppt = db.getUpcomingAppointment();
+        if (upcomingAppt.getAppointmentId() != null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Appointment Beginning Soon!");
+            alert.setHeaderText("You have an appointment soon");
+            ZonedDateTime zdt = ZonedDateTime.ofInstant(upcomingAppt.getStart().toLocalDateTime(), ZoneOffset.UTC, ZoneId.systemDefault());
+            alert.setContentText("Title: " + upcomingAppt.getTitle() + "\rLocation: " + upcomingAppt.getLocation() + "\rBeginning at: " + zdt.toLocalDateTime().toString());
+            alert.showAndWait();
+
+        }
+    }
+
+    @FXML
+    private void viewLoginLogs() {
+        Desktop desktop = Desktop.getDesktop();
+        File loginFile = new File("./loginlog.log");
+        if (loginFile.exists()) {
+            try {
+                desktop.open(loginFile);
+            } catch (IOException ex) {
+                Logger.getLogger(MainAppController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    private void showLoginScreen() {
+        try {
+            ResourceBundle rb = ResourceBundle.getBundle("wetsu195.Resources.Labels", getDefaultLocale());
+            Stage stage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"), rb);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainAppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

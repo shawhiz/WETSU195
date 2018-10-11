@@ -26,11 +26,11 @@ public class Address  {
 
     private Date createDate;
 
-    private String createdBy;
+    private int createdBy;
 
     private Date lastUpdate;
  
-    private String lastUpdateBy;
+    private int lastUpdateBy;
 
     public Address() {
     }
@@ -44,7 +44,7 @@ public class Address  {
         this.addressId = addressId;
     }
 
-    public Address(Integer addressId, String address, String address2, int cityId, String postalCode, String phone, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
+    public Address(Integer addressId, String address, String address2, int cityId, String postalCode, String phone, Date createDate, int createdBy, Date lastUpdate, int lastUpdateBy) {
         this.addressId = addressId;
         this.address = address;
         this.address2 = address2;
@@ -113,11 +113,11 @@ public class Address  {
         this.createDate = createDate;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -129,11 +129,11 @@ public class Address  {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getLastUpdateBy() {
+    public int getLastUpdateBy() {
         return lastUpdateBy;
     }
 
-    public void setLastUpdateBy(String lastUpdateBy) {
+    public void setLastUpdateBy(int lastUpdateBy) {
         this.lastUpdateBy = lastUpdateBy;
     }
     

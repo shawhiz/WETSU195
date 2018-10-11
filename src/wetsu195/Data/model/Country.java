@@ -8,20 +8,20 @@ package wetsu195.Data.model;
 import java.util.Date;
 
 public class Country {
-    
-        private static Integer idTicker = 0;
 
-       private Integer countryId;
-   
+    private static Integer idTicker = 0;
+
+    private Integer countryId;
+
     private String country;
-   
+
     private Date createDate;
-  
-    private String createdBy;
+
+    private int createdBy;
 
     private Date lastUpdate;
- 
-    private String lastUpdateBy;
+
+    private int lastUpdateBy;
 
     public Country() {
     }
@@ -29,13 +29,13 @@ public class Country {
     public Country(Integer countryId) {
         this.countryId = countryId;
     }
-    
-        public static Integer getNewId(){
+
+    public static Integer getNewId() {
         idTicker = idTicker + 1;
         return idTicker;
     }
 
-    public Country(Integer countryId, String country, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
+    public Country(Integer countryId, String country, Date createDate, int createdBy, Date lastUpdate, int lastUpdateBy) {
         this.countryId = countryId;
         this.country = country;
         this.createDate = createDate;
@@ -68,11 +68,11 @@ public class Country {
         this.createDate = createDate;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -84,11 +84,11 @@ public class Country {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getLastUpdateBy() {
+    public int getLastUpdateBy() {
         return lastUpdateBy;
     }
 
-    public void setLastUpdateBy(String lastUpdateBy) {
+    public void setLastUpdateBy(int lastUpdateBy) {
         this.lastUpdateBy = lastUpdateBy;
     }
 }

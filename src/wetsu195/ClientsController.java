@@ -139,7 +139,10 @@ clientName.prefWidthProperty().bind(clientList.widthProperty().multiply(.3));
 
                 if (clientView.getCustomerName().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
-                } else {
+                } 
+                 if (clientView.getAddress().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }else {
                     return false;
                 }
             }

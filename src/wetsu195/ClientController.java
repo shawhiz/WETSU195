@@ -183,18 +183,18 @@ public class ClientController implements Initializable {
     public void updateCustomer(){
         Integer successful = 0;
         editedCustomer.setCustomerName(name.getText());
-        editedCustomer.setLastUpdateBy(db.getActiveUser().getUserName());
+        editedCustomer.setLastUpdateBy(db.getActiveUser().getUserId());
         
         editedAddress.setPhone(phone.getText());
         editedAddress.setAddress(address1.getText());
         editedAddress.setAddress2(address2.getText());
-        editedAddress.setLastUpdateBy(db.getActiveUser().getUserName());
+        editedAddress.setLastUpdateBy(db.getActiveUser().getUserId());
         
         editedCity.setCity(city.getText());
-        editedCity.setLastUpdateBy(db.getActiveUser().getUserName());
+        editedCity.setLastUpdateBy(db.getActiveUser().getUserId());
         
         editedCountry.setCountry(country.getText());
-        editedCountry.setLastUpdateBy(db.getActiveUser().getUserName());
+        editedCountry.setLastUpdateBy(db.getActiveUser().getUserId());
 
          db.saveUpdatedCustomer(editedCustomer, editedAddress, editedCity, editedCountry);
           cancel();

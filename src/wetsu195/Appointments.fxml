@@ -21,7 +21,7 @@
          <columns>
             <TableColumn fx:id="titleColumn" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="Title" />
             <TableColumn fx:id="descriptionColumn" maxWidth="210.0" minWidth="210.0" prefWidth="210.0" text="Description" />
-            <TableColumn fx:id="locationColumn" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" text="Location" />
+            <TableColumn fx:id="typeColumn" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" text="Type" />
             <TableColumn fx:id="customerColumn" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" text="Customer" />
             <TableColumn fx:id="startColumn" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="Start" />
             <TableColumn fx:id="endColumn" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="End" />
@@ -71,13 +71,16 @@
                               <Insets right="25.0" />
                            </HBox.margin>
                         </Button>
-                        <Label fx:id="visibleTimes" alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="200.0" styleClass="subheader" text="Month" textAlignment="CENTER">
+                        <Label fx:id="visibleTimes" alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="200.0" styleClass="subheader" text="Month" textAlignment="CENTER">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
                            <padding>
                               <Insets left="10.0" right="10.0" />
                            </padding>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </Label>
                         <Button fx:id="nextBtn" mnemonicParsing="false" text="Next">
                            <HBox.margin>

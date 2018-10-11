@@ -18,9 +18,9 @@ import javafx.beans.property.StringProperty;
  * @author shawh
  */
 public class AppointmentView {
-    
+
     protected IntegerProperty appointmentId;
-    protected  StringProperty title;
+    protected StringProperty title;
     protected StringProperty description;
     protected StringProperty location;
     protected StringProperty contact;
@@ -28,7 +28,39 @@ public class AppointmentView {
     protected StringProperty url;
     protected StringProperty startDate;
     protected StringProperty stopDate;
-    
+    protected Timestamp startTimestamp;
+    protected Timestamp stopTimestamp;
+
+    private enum appointmentType {
+
+        Lawn, Tree, Construction, Other
+    };
+
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Timestamp getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(Timestamp startTimestamp) {
+        this.startTimestamp = startTimestamp;
+    }
+
+    public Timestamp getStopTimestamp() {
+        return stopTimestamp;
+    }
+
+    public void setStopTimestamp(Timestamp stopTimestamp) {
+        this.stopTimestamp = stopTimestamp;
+    }
 
     public IntegerProperty getAppointmentId() {
         return appointmentId;
@@ -87,12 +119,12 @@ public class AppointmentView {
     }
 
     public String getStartDate() {
-        
+
         return startDate.get();
     }
 
     public void setStartDate(String startDate) {
-        this.startDate =  new SimpleStringProperty(startDate);
+        this.startDate = new SimpleStringProperty(startDate);
     }
 
     public String getStopDate() {
@@ -105,5 +137,5 @@ public class AppointmentView {
 
     public AppointmentView() {
     }
-    
+
 }

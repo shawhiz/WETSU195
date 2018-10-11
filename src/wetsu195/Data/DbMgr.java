@@ -54,7 +54,7 @@ public abstract class DbMgr {
     private static String password = "53688211336";
     private Connection dbConnection;
 
-    private static User activeUser = new User();
+    public static User activeUser = new User();
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd hh:mm a");
             
             
@@ -102,20 +102,20 @@ public abstract class DbMgr {
         PreparedStatement statement = dbConnection.prepareStatement(sql);
         statement.setString(1, username); //username
         statement.setString(2, password); //password   
-
+        User newUser = new User();
         ResultSet results = statement.executeQuery();
         if (getResultSize(results) == 1) {
-            activeUser.setUserId(results.getInt(1)); //userId
-            activeUser.setUserName(results.getString(2)); //username
-            activeUser.setPassword(results.getString(3)); //password
-            activeUser.setActive((short) results.getInt(4)); //active 1 inactive 0
-            activeUser.setCreateBy(results.getString(5)); //createBy
-            activeUser.setCreateDate(results.getDate(6)); //createDate
-            activeUser.setLastUpdate(results.getDate(7)); //lastUpdate
-            activeUser.setLastUpdatedBy(results.getString(8)); //lastUpdateBy  
+            newUser.setUserId(results.getInt(1)); //userId
+            newUser.setUserName(results.getString(2)); //username
+            newUser.setPassword(results.getString(3)); //password
+            newUser.setActive((short) results.getInt(4)); //active 1 inactive 0
+            newUser.setCreateBy(results.getInt(5)); //createBy
+            newUser.setCreateDate(results.getDate(6)); //createDate
+            newUser.setLastUpdate(results.getDate(7)); //lastUpdate
+            newUser.setLastUpdatedBy(results.getInt(8)); //lastUpdateBy  
 
             closeDbConnection();
-            return activeUser;
+            return newUser;
         }
         return null;
     }
@@ -161,9 +161,9 @@ public abstract class DbMgr {
 
         PreparedStatement statement = dbConnection.prepareStatement(sql);
         statement.setString(1, country.getCountry()); //country
-        statement.setString(2, activeUser.getUserName()); //createdBy
+        statement.setInt(2, activeUser.getUserId()); //createdBy
         statement.setString(3, date.toString()); //createDate
-        statement.setString(4, activeUser.getUserName()); //lastUpdateBy     
+        statement.setInt(4, activeUser.getUserId()); //lastUpdateBy     
 
         if ((statement.executeUpdate()) > 0) {
             newId = getInsertedId();
@@ -183,8 +183,8 @@ public abstract class DbMgr {
         statement.setString(1, city.getCity()); //city
         statement.setInt(2, city.getCountryId()); //countryId
         statement.setString(3, date.toString()); //createDate
-        statement.setString(4, activeUser.getUserName()); //createdBy
-        statement.setString(5, activeUser.getUserName()); //lastUpdateBy     
+        statement.setInt(4, activeUser.getUserId()); //createdBy
+        statement.setInt(5, activeUser.getUserId()); //lastUpdateBy     
 
         if ((statement.executeUpdate()) > 0) {
             newId = getInsertedId();
@@ -207,8 +207,8 @@ public abstract class DbMgr {
         statement.setString(4, address.getPostalCode()); //postalcode
         statement.setString(5, address.getPhone()); //phone
         statement.setString(6, date.toString()); //createDate
-        statement.setString(7, activeUser.getUserName()); //createdBy
-        statement.setString(8, activeUser.getUserName()); //lastUpdateBy     
+        statement.setInt(7, activeUser.getUserId()); //createdBy
+        statement.setInt(8, activeUser.getUserId()); //lastUpdateBy     
 
         if ((statement.executeUpdate()) > 0) {
             newId = getInsertedId();
@@ -229,8 +229,8 @@ public abstract class DbMgr {
         statement.setInt(2, customer.getAddressId()); //addressId
         statement.setInt(3, (customer.getActive()) ? 1 : 0); // active
         statement.setString(4, date.toString()); //createDate
-        statement.setString(5, activeUser.getUserName()); //createdBy
-        statement.setString(6, activeUser.getUserName()); //lastUpdateBy     
+        statement.setInt(5, activeUser.getUserId()); //createdBy
+        statement.setInt(6, activeUser.getUserId()); //lastUpdateBy     
 
         if ((statement.executeUpdate()) > 0) {
             newId = getInsertedId();
@@ -262,9 +262,9 @@ public abstract class DbMgr {
             customer.setAddressId(results.getInt(3));
             customer.setActive((results.getInt(4) == 1) ? true : false);
             customer.setCreateDate(results.getDate(5));
-            customer.setCreatedBy(results.getString(6));
+            customer.setCreatedBy(results.getInt(6));
             customer.setLastUpdate(results.getDate(7));
-            customer.setLastUpdateBy(results.getString(8));
+            customer.setLastUpdateBy(results.getInt(8));
 
             customers.add(customer);
         }
@@ -282,9 +282,11 @@ public abstract class DbMgr {
             ResultSet results = statement.executeQuery(sql);
 
             while (results.next()) {
-                ClientView client = new ClientView();
+                ClientView client = new ClientView();              
+                
                 client.setCustomerId(new SimpleIntegerProperty(results.getInt(1)));
                 client.setCustomerName(new SimpleStringProperty(results.getString(2)));
+                
                 client.setActive(new SimpleBooleanProperty((results.getInt(3) == 1)));
                 client.setPhone(new SimpleStringProperty(results.getString(4)));
                 client.setAddress(new SimpleStringProperty(results.getString(5)));
@@ -325,6 +327,9 @@ public abstract class DbMgr {
                 appointment.setUrl(new SimpleStringProperty(results.getString(7)));
                 appointment.setStartDate(formattedDate(results.getTimestamp(8)));
                 appointment.setStopDate(formattedDate(results.getTimestamp(9)));
+                appointment.setStartTimestamp(results.getTimestamp(8));
+                appointment.setStopTimestamp(results.getTimestamp(9));
+                appointment.setType(results.getString(10));
                
                 appointmentView.add(appointment);
             }
@@ -351,7 +356,7 @@ public abstract class DbMgr {
         Timestamp date = new Timestamp(new Date().getTime());
         connectToDb();
 
-        String sql = "INSERT INTO appointment (customerid, title, description, location, contact, url, start, end, createdBy, lastUpdateBy, createDate) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?)";
+        String sql = "INSERT INTO appointment (customerid, title, description, location, contact, url, start, end, createdBy, lastUpdateBy, createDate, appointmenttype) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?)";
 
         PreparedStatement statement = dbConnection.prepareStatement(sql);
         statement.setInt(1, appointment.getCustomerId());
@@ -365,6 +370,7 @@ public abstract class DbMgr {
         statement.setInt(9, activeUser.getUserId());
         statement.setInt(10, activeUser.getUserId());
         statement.setString(11, date.toString());
+        statement.setString(12, appointment.getType());
 
         if ((statement.executeUpdate()) > 0) {
             newId = getInsertedId();
@@ -407,9 +413,9 @@ public abstract class DbMgr {
                 customer.setAddressId(results.getInt(3));
                 customer.setActive((results.getInt(4) == 1));
                 customer.setCreateDate(results.getDate(5));
-                customer.setCreatedBy(results.getString(6));
+                customer.setCreatedBy(results.getInt(6));
                 customer.setLastUpdate(results.getDate(7));
-                customer.setLastUpdateBy(results.getString(8));
+                customer.setLastUpdateBy(results.getInt(8));
             }
 
             closeDbConnection();
@@ -441,9 +447,9 @@ public abstract class DbMgr {
                 address.setPostalCode(results.getString(5));
                 address.setPhone(results.getString(6));
                 address.setCreateDate(results.getDate(7));
-                address.setCreatedBy(results.getString(8));
+                address.setCreatedBy(results.getInt(8));
                 address.setLastUpdate(results.getDate(9));
-                address.setLastUpdateBy(results.getString(10));
+                address.setLastUpdateBy(results.getInt(10));
             }
 
             closeDbConnection();
@@ -471,9 +477,9 @@ public abstract class DbMgr {
                 city.setCity(results.getString(2));
                 city.setCountryId(results.getInt(3));
                 city.setCreateDate(results.getDate(4));
-                city.setCreatedBy(results.getString(5));
+                city.setCreatedBy(results.getInt(5));
                 city.setLastUpdate(results.getDate(6));
-                city.setLastUpdateBy(results.getString(7));
+                city.setLastUpdateBy(results.getInt(7));
             }
 
             closeDbConnection();
@@ -500,9 +506,9 @@ public abstract class DbMgr {
                 country.setCountryId(results.getInt(1)); //id
                 country.setCountry(results.getString(2));
                 country.setCreateDate(results.getDate(3));
-                country.setCreatedBy(results.getString(4));
+                country.setCreatedBy(results.getInt(4));
                 country.setLastUpdate(results.getDate(5));
-                country.setLastUpdateBy(results.getString(6));
+                country.setLastUpdateBy(results.getInt(6));
             }
 
             closeDbConnection();
@@ -596,7 +602,7 @@ public abstract class DbMgr {
 
             PreparedStatement statement = dbConnection.prepareStatement(sql);
             statement.setString(1, editedCustomer.getCustomerName());
-            statement.setString(2, editedCustomer.getLastUpdateBy());
+            statement.setInt(2, editedCustomer.getLastUpdateBy());
             statement.setInt(3, editedCustomer.getCustomerId());
 
             statement.executeUpdate();
@@ -618,7 +624,7 @@ public abstract class DbMgr {
             statement.setString(2, editedAddress.getAddress2());
             statement.setString(3, editedAddress.getPostalCode());
             statement.setString(4, editedAddress.getPhone());
-            statement.setString(5, editedAddress.getLastUpdateBy());
+            statement.setInt(5, editedAddress.getLastUpdateBy());
             statement.setInt(6, editedAddress.getAddressId());
 
             statement.executeUpdate();
@@ -676,7 +682,7 @@ public abstract class DbMgr {
     public Appointment getAppointment(int get) {
         try {
             connectToDb();
-            String sql = "SELECT appointmentId, customerId, title, description, location, contact, url, start, end  from appointment where appointmentid = ?";
+            String sql = "SELECT appointmentId, customerId, title, description, location, contact, url, start, end, appointmentype  from appointment where appointmentid = ?";
 
             PreparedStatement statement = dbConnection.prepareStatement(sql);
             statement.setInt(1, get);
@@ -693,6 +699,7 @@ public abstract class DbMgr {
                 appointment.setUrl(results.getString(7));
                 appointment.setStart(results.getTimestamp(8));
                 appointment.setEnd(results.getTimestamp(9));
+                appointment.setTitle(results.getString(10));
 
             }
             closeDbConnection();
@@ -711,7 +718,7 @@ public abstract class DbMgr {
         try {
             connectToDb();
 
-            String sql = "UPDATE appointment set contact = ?, url = ? ,title = ?, description = ?, location = ?, start =?,  end =?,  lastUpdateBy = ?  where appointmentId = ?";
+            String sql = "UPDATE appointment set contact = ?, url = ? ,title = ?, description = ?, location = ?, start =?,  end =?,  lastUpdateBy = ?, appointmenttype =? where appointmentId = ?";
 
             PreparedStatement statement = dbConnection.prepareStatement(sql);
             statement.setString(1, editedappointment.getContact());
@@ -723,6 +730,7 @@ public abstract class DbMgr {
             statement.setTimestamp(7, editedappointment.getEnd());
             statement.setInt(8, activeUser.getUserId());
             statement.setInt(9, editedappointment.getAppointmentId());
+            statement.setString(10, editedappointment.getType());
 
             statement.executeUpdate();
 
@@ -787,4 +795,39 @@ public abstract class DbMgr {
         }
         return valid;
     }
-}
+
+    public Appointment getUpcomingAppointment() {
+        Appointment appointment = new Appointment();
+          try {
+           
+            connectToDb();
+            //where start time between now and now+15mins
+                    ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
+
+            String sql = "SELECT * FROM appointment where (start between ? and ?) and createdby =? ";
+
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            statement.setTimestamp(1, Timestamp.valueOf(zdt.toLocalDateTime()));
+            statement.setTimestamp(2, Timestamp.valueOf(zdt.plusMinutes(15).toLocalDateTime()));
+            statement.setInt(3, activeUser.getUserId());
+            ResultSet results = statement.executeQuery();
+
+            if (results.next()) {
+                 appointment.setAppointmentId(results.getInt(1));
+                appointment.setCustomerId(results.getInt(2));
+                appointment.setTitle(results.getString(3));
+                appointment.setDescription(results.getString(4));
+                appointment.setLocation(results.getString(5));
+                appointment.setContact(results.getString(6));
+                appointment.setUrl(results.getString(7));
+                appointment.setStart(results.getTimestamp(8));
+                appointment.setEnd(results.getTimestamp(9));
+                appointment.setType(results.getString(10));
+            }
+            closeDbConnection();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return  appointment;
+    }
+    }

@@ -7,23 +7,23 @@ package wetsu195.Data.model;
 
 import java.util.Date;
 
-public class City  {
-    
-        private static Integer idTicker = 0;
+public class City {
 
-       private Integer cityId;
-    
+    private static Integer idTicker = 0;
+
+    private Integer cityId;
+
     private String city;
-    
+
     private int countryId;
-   
+
     private Date createDate;
-    
-    private String createdBy;
-  
+
+    private int createdBy;
+
     private Date lastUpdate;
-    
-    private String lastUpdateBy;
+
+    private int lastUpdateBy;
 
     public City() {
     }
@@ -31,13 +31,13 @@ public class City  {
     public City(Integer cityId) {
         this.cityId = cityId;
     }
-    
-        public static Integer getNewId(){
+
+    public static Integer getNewId() {
         idTicker = idTicker + 1;
         return idTicker;
     }
 
-    public City(Integer cityId, String city, int countryId, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
+    public City(Integer cityId, String city, int countryId, Date createDate, int createdBy, Date lastUpdate, int lastUpdateBy) {
         this.cityId = cityId;
         this.city = city;
         this.countryId = countryId;
@@ -79,11 +79,11 @@ public class City  {
         this.createDate = createDate;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -95,12 +95,12 @@ public class City  {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getLastUpdateBy() {
+    public int getLastUpdateBy() {
         return lastUpdateBy;
     }
 
-    public void setLastUpdateBy(String lastUpdateBy) {
+    public void setLastUpdateBy(int lastUpdateBy) {
         this.lastUpdateBy = lastUpdateBy;
     }
-   
+
 }

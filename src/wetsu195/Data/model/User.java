@@ -18,13 +18,13 @@ public class User  {
     
     private short active;
     
-    private String createBy;
+    private int createBy;
     
     private Date createDate;
     
     private Date lastUpdate;
     
-    private String lastUpdatedBy;
+    private int lastUpdatedBy;
 
     public User() {
     }
@@ -37,7 +37,7 @@ public class User  {
         this.userId = userId;
     }
 
-    public User(Integer userId, String userName, String password, short active, String createBy, Date createDate, Date lastUpdate, String lastUpdatedBy) {
+    public User(Integer userId, String userName, String password, short active, int createBy, Date createDate, Date lastUpdate, int lastUpdatedBy) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
@@ -80,11 +80,11 @@ public class User  {
         this.active = active;
     }
 
-    public String getCreateBy() {
+    public int getCreateBy() {
         return createBy;
     }
 
-    public void setCreateBy(String createBy) {
+    public void setCreateBy(int createBy) {
         this.createBy = createBy;
     }
 
@@ -104,11 +104,11 @@ public class User  {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getLastUpdatedBy() {
+    public int getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(String lastUpdatedBy) {
+    public void setLastUpdatedBy(int lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
    

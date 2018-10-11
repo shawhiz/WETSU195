@@ -9,11 +9,15 @@ import static com.sun.javaws.Globals.getDefaultLocale;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
@@ -64,6 +68,11 @@ public class LoginController implements Initializable {
     private ImageView logo;
 
     private ResourceBundle language;
+    
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
+    
+    
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -85,12 +94,23 @@ public class LoginController implements Initializable {
 
     @FXML
     public void Login() throws IOException {
+        Handler fileHandler  = new FileHandler("./loginlog.log", true);
+        LOGGER.addHandler(fileHandler);  
+        fileHandler.setLevel(Level.ALL);
+        LOGGER.setLevel(Level.ALL);
+        LOGGER.config("config done.");
+
+        
+        
         String name = username.getText();
         String pass = password.getText();
-        User activeUser = checkCredentials(name, pass);
-        if (activeUser != null) {
+        db.activeUser = checkCredentials(name, pass);
+        ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
+        if (db.activeUser != null) {
+            LOGGER.log(Level.FINE, username.getText() + "(userid "+db.activeUser.getUserId() +") " + "successfully logged in at "+ zdt.toString());
             showMainApp();
         } else {
+            LOGGER.log(Level.WARNING, username.getText() + "had afailed login attempt at "+ zdt.toString());
             showInvalidLogin();
         }
 

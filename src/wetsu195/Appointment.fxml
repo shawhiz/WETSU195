@@ -35,7 +35,7 @@
             </Label>
             <ChoiceBox id="customerSelectBox" fx:id="customerAppt" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="557.0">
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -46,7 +46,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets left="10.0" right="10.0" top="5.0" />
                </VBox.margin>
             </TextField>
             <TextField fx:id="url" promptText="URL">
@@ -54,7 +54,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets left="10.0" right="10.0" top="5.0" />
                </VBox.margin>
             </TextField>
             <Label fx:id="servicedetails" text="Service Details">
@@ -68,25 +68,33 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets left="10.0" right="10.0" top="5.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="description" layoutX="20.0" layoutY="220.0" promptText="Description">
+            <TextField fx:id="description" promptText="Description">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <VBox.margin>
-                  <Insets left="10.0" right="10.0" />
+                  <Insets left="10.0" right="10.0" top="5.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="location" promptText="Location">
+            <TextField fx:id="location" prefHeight="37.0" promptText="Location">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets left="10.0" right="10.0" top="5.0" />
                </VBox.margin>
             </TextField>
+            <ChoiceBox fx:id="apptType" prefHeight="45.0" prefWidth="619.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </ChoiceBox>
          </children>
       </VBox>
       <Button fx:id="delete" layoutX="27.0" layoutY="537.0" maxWidth="160.0" minWidth="160.0" mnemonicParsing="false" onAction="#deleteAppointment" prefHeight="30.0" prefWidth="160.0" text="Delete Appointment" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="26.0">

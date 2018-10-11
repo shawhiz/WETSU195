@@ -10,27 +10,27 @@ import java.util.Date;
 public class Customer {
 
     private static Integer idTicker = 0;
-    
+
     private Integer customerId;
-    
+
     private String customerName;
-   
+
     private int addressId;
-   
+
     private boolean active;
-    
+
     private Date createDate;
-   
-    private String createdBy;
-    
+
+    private int createdBy;
+
     private Date lastUpdate;
-    
-    private String lastUpdateBy;
+
+    private int lastUpdateBy;
 
     public Customer() {
     }
-    
-    public static Integer getNewId(){
+
+    public static Integer getNewId() {
         idTicker = idTicker + 1;
         return idTicker;
     }
@@ -39,7 +39,7 @@ public class Customer {
         this.customerId = customerId;
     }
 
-    public Customer(Integer customerId, String customerName, int addressId, boolean active, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
+    public Customer(Integer customerId, String customerName, int addressId, boolean active, Date createDate, int createdBy, Date lastUpdate, int lastUpdateBy) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.addressId = addressId;
@@ -90,11 +90,11 @@ public class Customer {
         this.createDate = createDate;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -106,12 +106,12 @@ public class Customer {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getLastUpdateBy() {
+    public int getLastUpdateBy() {
         return lastUpdateBy;
     }
 
-    public void setLastUpdateBy(String lastUpdateBy) {
+    public void setLastUpdateBy(int lastUpdateBy) {
         this.lastUpdateBy = lastUpdateBy;
     }
-   
+
 }

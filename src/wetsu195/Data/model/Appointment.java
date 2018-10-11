@@ -36,11 +36,23 @@ public class Appointment  {
     
     private Date createDate;
     
-    private String createdBy;
+    private int createdBy;
   
     private Date lastUpdate;
    
-    private String lastUpdateBy;
+    private int lastUpdateBy;
+    
+    public static enum TYPE { Lawn, Tree, Construction, Other };
+    
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Appointment() {
     }
@@ -54,7 +66,7 @@ public class Appointment  {
         this.appointmentId = appointmentId;
     }
 
-    public Appointment(Integer appointmentId, int customerId, String title, String description, String location, String contact, String url, Timestamp start, Timestamp end, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
+    public Appointment(Integer appointmentId, int customerId, String title, String description, String location, String contact, String url, Timestamp start, Timestamp end, Date createDate, int createdBy, Date lastUpdate, int lastUpdateBy, String type) {
         this.appointmentId = appointmentId;
         this.customerId = customerId;
         this.title = title;
@@ -68,6 +80,7 @@ public class Appointment  {
         this.createdBy = createdBy;
         this.lastUpdate = lastUpdate;
         this.lastUpdateBy = lastUpdateBy;
+        this.type = type;
     }
 
     public Integer getAppointmentId() {
@@ -150,11 +163,11 @@ public class Appointment  {
         this.createDate = createDate;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -166,11 +179,11 @@ public class Appointment  {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getLastUpdateBy() {
+    public int getLastUpdateBy() {
         return lastUpdateBy;
     }
 
-    public void setLastUpdateBy(String lastUpdateBy) {
+    public void setLastUpdateBy(int lastUpdateBy) {
         this.lastUpdateBy = lastUpdateBy;
     }
 

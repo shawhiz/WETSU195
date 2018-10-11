@@ -5,26 +5,21 @@
  */
 package wetsu195;
 
-import com.mysql.jdbc.util.TimezoneDump;
-import java.io.IOException;
 import java.net.URL;
-import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -112,6 +107,10 @@ public class AppointmentController implements Initializable {
 
     private Appointment editedappointment;
     List<Customer> customers;
+    @FXML
+    private Label title;
+    @FXML
+    private ChoiceBox<Appointment.TYPE> apptType;
 
     /**
      * Initializes the controller class.
@@ -141,7 +140,7 @@ public class AppointmentController implements Initializable {
         stopminute.getItems().addAll(00, 15, 30, 45);
         starthour.getItems().addAll(9, 10, 11, 12, 1, 2, 3, 4, 5);
         stophour.getItems().addAll(9, 10, 11, 12, 1, 2, 3, 4, 5);
-
+        apptType.getItems().setAll(Appointment.TYPE.values());
     }
 
     @FXML
@@ -166,7 +165,7 @@ public class AppointmentController implements Initializable {
     }
 
     public boolean validateInput() {
-        boolean valid = true;
+        boolean valid = true;    
 
         if (contact.getText().isEmpty()) {
             valid = false;
@@ -187,6 +186,9 @@ public class AppointmentController implements Initializable {
             valid = false;
         }
         if (stopminute.getValue() == null) {
+            valid = false;
+        }
+        if (apptType.getValue() == null){
             valid = false;
         }
 
@@ -216,6 +218,7 @@ public class AppointmentController implements Initializable {
             appointment.setTitle(titletext.getText());
             appointment.setDescription(description.getText());
             appointment.setLocation(location.getText());
+            appointment.setType(apptType.getValue().toString());
 
             LocalDate localDate = appointmentdate.getValue();
             
@@ -287,6 +290,7 @@ public class AppointmentController implements Initializable {
         editedappointment.setTitle(titletext.getText());
         editedappointment.setDescription(description.getText());
         editedappointment.setLocation(location.getText());
+        editedappointment.setType(apptType.getValue().toString());
         
         
         LocalDate localDate = appointmentdate.getValue();
@@ -312,7 +316,7 @@ public class AppointmentController implements Initializable {
 
         editedappointment.setStart(utcStartTimestamp);
         editedappointment.setEnd(utcStopTimestamp);
-        editedappointment.setLastUpdateBy(db.getActiveUser().getUserId().toString());
+        editedappointment.setLastUpdateBy(db.getActiveUser().getUserId());
 
         if (db.validateOverlap(editedappointment)) {
             db.saveUpdatedAppointment(editedappointment);
