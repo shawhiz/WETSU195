@@ -13,18 +13,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -52,16 +47,18 @@ public abstract class DbMgr {
     private static String url = "jdbc:mysql://52.206.157.109/U04dK8";
     private static String user = "U04dK8";
     private static String password = "53688211336";
-    private Connection dbConnection;
 
     public static User activeUser = new User();
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd hh:mm a");
-            
-            
 
+    public static enum ReportType {
+
+        byTypeMonthly, byConsultantMonthly, byClientType
+    };
 
     private static ObservableList<ClientView> clientView = FXCollections.observableArrayList();
     private static ObservableList<AppointmentView> appointmentView = FXCollections.observableArrayList();
+    private Connection dbConnection;
 
     private void connectToDb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
@@ -92,6 +89,42 @@ public abstract class DbMgr {
             return 0;
         }
         return size;
+    }
+
+    public ResultSet getReportResults(ReportType type) {
+        try {
+            connectToDb();
+            String sql = "";
+            if (type == ReportType.byTypeMonthly) {
+                sql = "select  year(start),month(start),appointmentType,count(*)\n"
+                        + "from appointment\n"
+                        + "group by appointmentType, year(start),MONTH(start)";
+            }
+
+            if (type == ReportType.byConsultantMonthly) {
+                sql = "select  user.username, title, appointmentType, customer.customerName, start,end\n" +
+"                      from appointment\n" +
+"                      join user on  userId = appointment.createdBy\n" +
+"                      join customer on appointment.customerId = customer.customerId" +
+                       " order by start";
+            }
+
+            if (type == ReportType.byClientType) {
+                sql = "select , appointmentType, customer.customerName\n"
+                        + "from appointment\n"
+                        + "join customer on appointment.customerId = customer.customerId\n";
+              
+            }
+            
+            PreparedStatement statement = dbConnection.prepareStatement(sql);
+            return  statement.executeQuery();
+            
+                 } catch (SQLException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public User getUserByCredentials(String username, String password) throws SQLException, ClassNotFoundException {
@@ -282,11 +315,11 @@ public abstract class DbMgr {
             ResultSet results = statement.executeQuery(sql);
 
             while (results.next()) {
-                ClientView client = new ClientView();              
-                
+                ClientView client = new ClientView();
+
                 client.setCustomerId(new SimpleIntegerProperty(results.getInt(1)));
                 client.setCustomerName(new SimpleStringProperty(results.getString(2)));
-                
+
                 client.setActive(new SimpleBooleanProperty((results.getInt(3) == 1)));
                 client.setPhone(new SimpleStringProperty(results.getString(4)));
                 client.setAddress(new SimpleStringProperty(results.getString(5)));
@@ -330,7 +363,7 @@ public abstract class DbMgr {
                 appointment.setStartTimestamp(results.getTimestamp(8));
                 appointment.setStopTimestamp(results.getTimestamp(9));
                 appointment.setType(results.getString(10));
-               
+
                 appointmentView.add(appointment);
             }
             closeDbConnection();
@@ -344,9 +377,9 @@ public abstract class DbMgr {
 
         return null;
     }
-    
-    String formattedDate(Timestamp timestamp){
-         timestamp.toInstant();
+
+    String formattedDate(Timestamp timestamp) {
+        timestamp.toInstant();
         ZonedDateTime zdt = ZonedDateTime.ofInstant(timestamp.toLocalDateTime(), ZoneOffset.UTC, ZoneId.systemDefault());
         return dtf.format(zdt.toLocalDateTime());
     }
@@ -365,7 +398,7 @@ public abstract class DbMgr {
         statement.setString(4, appointment.getLocation());
         statement.setString(5, appointment.getContact());
         statement.setString(6, appointment.getUrl());
-        statement.setTimestamp(7,appointment.getStart());
+        statement.setTimestamp(7, appointment.getStart());
         statement.setTimestamp(8, appointment.getEnd());
         statement.setInt(9, activeUser.getUserId());
         statement.setInt(10, activeUser.getUserId());
@@ -798,11 +831,11 @@ public abstract class DbMgr {
 
     public Appointment getUpcomingAppointment() {
         Appointment appointment = new Appointment();
-          try {
-           
+        try {
+
             connectToDb();
             //where start time between now and now+15mins
-                    ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
+            ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
 
             String sql = "SELECT * FROM appointment where (start between ? and ?) and createdby =? ";
 
@@ -813,7 +846,7 @@ public abstract class DbMgr {
             ResultSet results = statement.executeQuery();
 
             if (results.next()) {
-                 appointment.setAppointmentId(results.getInt(1));
+                appointment.setAppointmentId(results.getInt(1));
                 appointment.setCustomerId(results.getInt(2));
                 appointment.setTitle(results.getString(3));
                 appointment.setDescription(results.getString(4));
@@ -828,6 +861,6 @@ public abstract class DbMgr {
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DbMgr.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return  appointment;
+        return appointment;
     }
-    }
+}
