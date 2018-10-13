@@ -136,7 +136,7 @@ public class MainAppController implements Initializable {
     @FXML
     private void viewLoginLogs() {
         Desktop desktop = Desktop.getDesktop();
-        File loginFile = new File("./loginlog.log");
+        File loginFile = new File("./loginlog.txt");
         if (loginFile.exists()) {
             try {
                 desktop.open(loginFile);

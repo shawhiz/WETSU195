@@ -5,16 +5,10 @@
  */
 package wetsu195;
 
-import com.sun.javafx.scene.control.skin.TableColumnHeader;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
 import java.net.URL;
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormatSymbols;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,13 +17,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import jdk.nashorn.internal.objects.NativeArray;
 import wetsu195.Data.DbMgr;
 import wetsu195.Data.model.Appointment;
 import java.text.DateFormatSymbols;
@@ -38,11 +28,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.Border;
-import javafx.stage.Stage;
 
 /**
  * FXML Controller class

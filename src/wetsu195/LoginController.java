@@ -94,7 +94,7 @@ public class LoginController implements Initializable {
 
     @FXML
     public void Login() throws IOException {
-        Handler fileHandler  = new FileHandler("./loginlog.log", true);
+        Handler fileHandler  = new FileHandler("./loginlog.txt", true);
         LOGGER.addHandler(fileHandler);  
         fileHandler.setLevel(Level.ALL);
         LOGGER.setLevel(Level.ALL);
