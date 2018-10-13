@@ -3079,3 +3079,315 @@
   <thread>13</thread>
   <message>test(userid 1) successfully logged in at 2018-10-12T02:55:38.562Z[UTC]</message>
 </record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T19:25:53</date>
+  <millis>1539386753260</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T19:25:53</date>
+  <millis>1539386753876</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-12T23:25:53.874Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T19:34:46</date>
+  <millis>1539387286612</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T19:34:47</date>
+  <millis>1539387287198</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-12T23:34:47.197Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T19:36:25</date>
+  <millis>1539387385065</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T19:36:25</date>
+  <millis>1539387385601</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-12T23:36:25.600Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T19:58:38</date>
+  <millis>1539388718446</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T19:58:39</date>
+  <millis>1539388719021</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-12T23:58:38.995Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:15:19</date>
+  <millis>1539389719999</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:15:20</date>
+  <millis>1539389720583</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:15:20.583Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:22:45</date>
+  <millis>1539390165538</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:22:46</date>
+  <millis>1539390166111</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:22:46.084Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:25:47</date>
+  <millis>1539390347606</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:25:48</date>
+  <millis>1539390348158</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:25:48.158Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:29:55</date>
+  <millis>1539390595390</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:29:55</date>
+  <millis>1539390595943</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:29:55.942Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:34:23</date>
+  <millis>1539390863670</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:34:24</date>
+  <millis>1539390864244</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:34:24.243Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:35:30</date>
+  <millis>1539390930244</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:35:30</date>
+  <millis>1539390930869</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:35:30.842Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:36:26</date>
+  <millis>1539390986252</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:36:26</date>
+  <millis>1539390986958</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:36:26.931Z[UTC]</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-10-12T20:37:01</date>
+  <millis>1539391021116</millis>
+  <sequence>0</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>CONFIG</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>config done.</message>
+</record>
+<record>
+  <date>2018-10-12T20:37:01</date>
+  <millis>1539391021720</millis>
+  <sequence>1</sequence>
+  <logger>wetsu195.LoginController</logger>
+  <level>FINE</level>
+  <class>wetsu195.LoginController</class>
+  <method>Login</method>
+  <thread>13</thread>
+  <message>test(userid 1) successfully logged in at 2018-10-13T00:37:01.720Z[UTC]</message>
+</record>
+</log>

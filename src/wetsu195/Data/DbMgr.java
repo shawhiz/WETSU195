@@ -53,7 +53,7 @@ public abstract class DbMgr {
 
     public static enum ReportType {
 
-        byTypeMonthly, byConsultantMonthly, byClientType
+        byTypeMonthly, byConsultantSchedule, byClientSchedule
     };
 
     private static ObservableList<ClientView> clientView = FXCollections.observableArrayList();
@@ -101,7 +101,7 @@ public abstract class DbMgr {
                         + "group by appointmentType, year(start),MONTH(start)";
             }
 
-            if (type == ReportType.byConsultantMonthly) {
+            if (type == ReportType.byConsultantSchedule) {
                 sql = "select  user.username, title, appointmentType, customer.customerName, start,end\n" +
 "                      from appointment\n" +
 "                      join user on  userId = appointment.createdBy\n" +
@@ -109,10 +109,12 @@ public abstract class DbMgr {
                        " order by start";
             }
 
-            if (type == ReportType.byClientType) {
-                sql = "select , appointmentType, customer.customerName\n"
-                        + "from appointment\n"
-                        + "join customer on appointment.customerId = customer.customerId\n";
+            if (type == ReportType.byClientSchedule) {
+                sql = "select  user.username, title, appointmentType, customer.customerName, start,end\n" +
+"                      from appointment\n" +
+"                      join user on  userId = appointment.createdBy\n" +
+"                      join customer on appointment.customerId = customer.customerId" +
+                       " order by start";
               
             }
             
@@ -715,7 +717,7 @@ public abstract class DbMgr {
     public Appointment getAppointment(int get) {
         try {
             connectToDb();
-            String sql = "SELECT appointmentId, customerId, title, description, location, contact, url, start, end, appointmentype  from appointment where appointmentid = ?";
+            String sql = "SELECT appointmentId, customerId, title, description, location, contact, url, start, end, appointmentType  from appointment where appointmentid = ?";
 
             PreparedStatement statement = dbConnection.prepareStatement(sql);
             statement.setInt(1, get);
@@ -732,7 +734,7 @@ public abstract class DbMgr {
                 appointment.setUrl(results.getString(7));
                 appointment.setStart(results.getTimestamp(8));
                 appointment.setEnd(results.getTimestamp(9));
-                appointment.setTitle(results.getString(10));
+                appointment.setType(results.getString(10));
 
             }
             closeDbConnection();

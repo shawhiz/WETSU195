@@ -117,7 +117,7 @@ public class AppointmentController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         try {
             overlaperror.visibleProperty().set(false);
             delete.visibleProperty().set(false);
@@ -165,7 +165,7 @@ public class AppointmentController implements Initializable {
     }
 
     public boolean validateInput() {
-        boolean valid = true;    
+        boolean valid = true;
 
         if (contact.getText().isEmpty()) {
             valid = false;
@@ -188,7 +188,7 @@ public class AppointmentController implements Initializable {
         if (stopminute.getValue() == null) {
             valid = false;
         }
-        if (apptType.getValue() == null){
+        if (apptType.getValue() == null) {
             valid = false;
         }
 
@@ -221,21 +221,19 @@ public class AppointmentController implements Initializable {
             appointment.setType(apptType.getValue().toString());
 
             LocalDate localDate = appointmentdate.getValue();
-            
-            if(starthour.getValue() < 9){
-                starthour.setValue(starthour.getValue()+12);
+
+            if (starthour.getValue() < 9) {
+                starthour.setValue(starthour.getValue() + 12);
             }
-            if(stophour.getValue() <9){
-                stophour.setValue(stophour.getValue()+12);
+            if (stophour.getValue() < 9) {
+                stophour.setValue(stophour.getValue() + 12);
             }
-                              
+
             LocalTime localstart = LocalTime.of(starthour.getValue(), startminute.getValue());
             LocalTime localstop = LocalTime.of(stophour.getValue(), stopminute.getValue());
-            
+
             LocalDateTime localDateTimeStart = LocalDateTime.of(localDate, localstart);
             LocalDateTime localDateTimeStop = LocalDateTime.of(localDate, localstop);
-            
-            
 
             ZoneId usersZoneId = ZoneId.systemDefault();
             ZonedDateTime startZoneUTC = localDateTimeStart.atZone(usersZoneId).withZoneSameInstant(ZoneId.of("UTC"));
@@ -291,17 +289,16 @@ public class AppointmentController implements Initializable {
         editedappointment.setDescription(description.getText());
         editedappointment.setLocation(location.getText());
         editedappointment.setType(apptType.getValue().toString());
-        
-        
+
         LocalDate localDate = appointmentdate.getValue();
         LocalTime localstart = LocalTime.of(starthour.getValue(), startminute.getValue());
         LocalTime localstop = LocalTime.of(stophour.getValue(), stopminute.getValue());
-        
+
         if (starthour.getValue() < 9) {
-         localstart = LocalTime.of(starthour.getValue()+12, startminute.getValue());
+            localstart = LocalTime.of(starthour.getValue() + 12, startminute.getValue());
         }
         if (stophour.getValue() < 9) {
-            localstop = LocalTime.of(stophour.getValue()+12, stopminute.getValue());
+            localstop = LocalTime.of(stophour.getValue() + 12, stopminute.getValue());
         }
 
         LocalDateTime localDateTimeStart = LocalDateTime.of(localDate, localstart);
@@ -318,11 +315,16 @@ public class AppointmentController implements Initializable {
         editedappointment.setEnd(utcStopTimestamp);
         editedappointment.setLastUpdateBy(db.getActiveUser().getUserId());
 
-        if (db.validateOverlap(editedappointment)) {
-            db.saveUpdatedAppointment(editedappointment);
-            cancel();
+        if (!validateInput()) {
+            showInvalidInput();
         } else {
-            invalidAppointment();
+            if (db.validateOverlap(editedappointment)) {
+                ;
+                db.saveUpdatedAppointment(editedappointment);
+                cancel();
+            } else {
+                invalidAppointment();
+            }
         }
     }
 
@@ -336,6 +338,19 @@ public class AppointmentController implements Initializable {
             titletext.setText(editedappointment.getTitle());
             description.setText(editedappointment.getDescription());
             location.setText(editedappointment.getLocation());
+
+            if (editedappointment.getType().toString().equals("Lawn")) {
+                apptType.setValue(Appointment.TYPE.Lawn);
+            }
+            if (editedappointment.getType().toString().equals("Tree")) {
+                apptType.setValue(Appointment.TYPE.Tree);
+            }
+            if (editedappointment.getType().toString().equals("Construction")) {
+                apptType.setValue(Appointment.TYPE.Construction);
+            }
+           else {
+                apptType.setValue(Appointment.TYPE.Other);
+            }
 
             Timestamp tsStart = editedappointment.getStart();
             tsStart.toInstant();

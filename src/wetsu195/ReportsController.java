@@ -79,6 +79,8 @@ public class ReportsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        
+        //Using a lambda here because this is only used here, saving having to write a separate method.
         byMonth.setOnAction(event -> {
 
             try {
@@ -142,17 +144,65 @@ public class ReportsController implements Initializable {
 
         byClient.setOnAction(event -> {
             try {
-                results = db.getReportResults(DbMgr.ReportType.byClientType);
-            }
-            catch (Exception ex) {
+                results = db.getReportResults(DbMgr.ReportType.byClientSchedule);
+                ArrayList<TreeItem> clients = new ArrayList<TreeItem>();
+                ArrayList<String> clientName = new ArrayList<String>();
+
+                while (results.next()) {
+                    String resultClient = results.getString(4);
+                    if (!clientName.contains(resultClient)) {
+                        clientName.add(resultClient);
+                    }
+                }
+
+                for (String name : clientName) {
+                    clients.add(new TreeItem(name));
+                }
+
+                //using lamba here to efficiently iterate in place of a traditional for loop
+                clients.stream().forEach(client -> {
+                    try {
+                        results.beforeFirst();
+                        while (results.next()) {
+                            
+                            if (results.getString(4).equals(client.getValue())) {
+                                ZonedDateTime start = ZonedDateTime.ofInstant(results.getTimestamp(5).toLocalDateTime(), ZoneOffset.UTC, ZoneId.systemDefault());
+                                ZonedDateTime end = ZonedDateTime.ofInstant(results.getTimestamp(6).toLocalDateTime(), ZoneOffset.UTC, ZoneId.systemDefault());
+                                
+                                String apptInfo = "Title: " + results.getString(2) + "\n"
+                                        + "\tType: " + results.getString(3) + "\n"
+                                        + "\tFrom: " + dtf.format(start) + " until " + dtf.format(end) + "\n"
+                                        + "\tWith: " + results.getString(1);
+                                
+                                client.getChildren().add(new TreeItem(apptInfo));
+                            }
+                            
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ReportsController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    });
+
+                reportResults.getChildren().clear();
+                TreeView treeView = new TreeView();
+                treeView.setPrefWidth(1200);
+                treeView.setMinWidth(1200);
+                treeView.setMinHeight(600);
+                treeView.setPrefHeight(600);
+                TreeItem rootItem = new TreeItem("Schedules by Client");
+                rootItem.getChildren().addAll(clients);
+                treeView.setRoot(rootItem);
+                rootItem.setExpanded(true);
+                treeView.setBackground(Background.EMPTY);
+                reportResults.getChildren().setAll(treeView);
+            } catch (SQLException ex) {
                 Logger.getLogger(ReportsController.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         });
 
         byConsultant.setOnAction(event -> {
             try {
-                results = db.getReportResults(DbMgr.ReportType.byConsultantMonthly);
+                results = db.getReportResults(DbMgr.ReportType.byConsultantSchedule);
                 ArrayList<TreeItem> consultants = new ArrayList<TreeItem>();
                 ArrayList<String> consultantNames = new ArrayList<String>();
 

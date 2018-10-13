@@ -5,25 +5,20 @@
  */
 package wetsu195;
 
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -47,7 +42,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import wetsu195.Data.DbMgr;
 import wetsu195.Data.model.AppointmentView;
-import wetsu195.Data.model.ClientView;
 
 /**
  * FXML Controller class
