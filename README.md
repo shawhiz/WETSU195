@@ -7,4 +7,4 @@ Here's a few key features and points:
 * Reports in TreeViews
 * all data is in a remote DB that may not be accessible in the future because this was for coursework.
 
-This project was a lot of fun. Feel free to install the exe to see it in action. username and password are 'test'
+This project was a lot of fun. Feel free to install the exe to see it in action. username and password are 'test'. A pdf of the rubrick used for grading is included.
